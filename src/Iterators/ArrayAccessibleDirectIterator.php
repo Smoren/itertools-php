@@ -5,12 +5,13 @@ namespace IterTools\Iterators;
 /**
  * @template TKey
  * @template TValue
- * @phpstan-type ArrayAccessible = array<TKey, TValue>|\ArrayAccess<TKey, TValue>
+ * @phpstan-type ArrayAccessible = array<TKey, TValue>|(\ArrayAccess<TKey, TValue>&iterable<TKey, TValue>)
  *
  * @implements ReversibleIterator<TKey, TValue>
  */
-class ArrayAccessDirectIterator implements ReversibleIterator
+class ArrayAccessibleDirectIterator implements ReversibleIterator
 {
+    // TODO rnadom access
     /**
      * @var ArrayAccessible
      */
@@ -25,7 +26,7 @@ class ArrayAccessDirectIterator implements ReversibleIterator
     }
 
     /**
-     * @return TValue|null
+     * @return TValue|false
      */
     public function current()
     {
@@ -65,10 +66,10 @@ class ArrayAccessDirectIterator implements ReversibleIterator
     }
 
     /**
-     * @return ArrayAccessReverseIterator<TKey, TValue>
+     * @return ArrayAccessibleReverseIterator<TKey, TValue>
      */
-    public function reverse(): ArrayAccessReverseIterator
+    public function reverse(): ArrayAccessibleReverseIterator
     {
-        return new ArrayAccessReverseIterator($this->data);
+        return new ArrayAccessibleReverseIterator($this->data);
     }
 }

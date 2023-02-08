@@ -16,7 +16,7 @@ interface ReversibleIterator extends \Iterator
     public function reverse(): \Iterator;
 
     /**
-     * @return TValue|null
+     * @return TValue|false
      */
     public function current();
 
