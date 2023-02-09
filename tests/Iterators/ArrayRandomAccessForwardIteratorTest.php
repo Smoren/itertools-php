@@ -9,7 +9,7 @@ use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Stream;
 
 /**
- * @phpstan-type ArrayLike = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
+ * @phpstan-type IterableArrayAccess = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
  */
 class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -84,7 +84,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseRead(array $input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByReverting(array $input, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
@@ -96,6 +96,31 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         foreach ($iterator as $key => $value) {
             $resultKeys[] = $key;
             $resultValues[] = $value;
+        }
+
+        // Then
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
+    }
+
+    /**
+     * @dataProvider dataProviderForReverseRead
+     * @param array $input
+     * @param array $expectedKeys
+     * @param array $expectedValues
+     * @return void
+     */
+    public function testReverseReadByUsingPrev(array $input, array $expectedKeys, array $expectedValues): void
+    {
+        // Given
+        $resultKeys = [];
+        $resultValues = [];
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+
+        // When
+        for ($iterator->end(); $iterator->valid(); $iterator->prev()) {
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
         }
 
         // Then

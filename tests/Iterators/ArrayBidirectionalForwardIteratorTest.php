@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace IterTools\Tests\Iterators;
 
-use IterTools\Iterators\ArrayForwardIterator;
+use IterTools\Iterators\ArrayBidirectionalForwardIterator;
 
-class ArrayForwardIteratorTest extends \PHPUnit\Framework\TestCase
+class ArrayBidirectionalForwardIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderDirectRead
@@ -20,7 +20,7 @@ class ArrayForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayForwardIterator($input);
+        $iterator = new ArrayBidirectionalForwardIterator($input);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -79,18 +79,43 @@ class ArrayForwardIteratorTest extends \PHPUnit\Framework\TestCase
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseRead(array $input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByReverting(array $input, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayForwardIterator($input);
+        $iterator = new ArrayBidirectionalForwardIterator($input);
         $iterator = $iterator->reverse();
 
         // When
         foreach ($iterator as $key => $value) {
             $resultKeys[] = $key;
             $resultValues[] = $value;
+        }
+
+        // Then
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
+    }
+
+    /**
+     * @dataProvider dataProviderForReverseRead
+     * @param array $input
+     * @param array $expectedKeys
+     * @param array $expectedValues
+     * @return void
+     */
+    public function testReverseReadByUsingPrev(array $input, array $expectedKeys, array $expectedValues): void
+    {
+        // Given
+        $resultKeys = [];
+        $resultValues = [];
+        $iterator = new ArrayBidirectionalForwardIterator($input);
+
+        // When
+        for ($iterator->end(); $iterator->valid(); $iterator->prev()) {
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
         }
 
         // Then
@@ -134,7 +159,7 @@ class ArrayForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayForwardIterator($input);
+        $iterator = new ArrayBidirectionalForwardIterator($input);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -191,7 +216,7 @@ class ArrayForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayForwardIterator($input);
+        $iterator = new ArrayBidirectionalForwardIterator($input);
 
         // When
         $iterator->rewind();

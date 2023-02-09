@@ -3,12 +3,13 @@
 namespace IterTools\Tests\Fixture;
 
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
+use IterTools\Iterators\Interfaces\BidirectionalIteratorAggregate;
 
 /**
  * @template TKey
  * @template TValue
  */
-class RandomAccessFixture implements BidirectionalIterator, \ArrayAccess, \Countable
+class BidirectionalIterableArrayAccessFixture implements BidirectionalIteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array<TKey, TValue>
@@ -24,59 +25,11 @@ class RandomAccessFixture implements BidirectionalIterator, \ArrayAccess, \Count
     }
 
     /**
-     * @return TValue|false
+     * @return BidirectionalIterator
      */
-    public function current()
+    public function getIterator(): BidirectionalIterator
     {
-        return current($this->data);
-    }
-
-    /**
-     * @return TKey|null
-     */
-    public function key()
-    {
-        return key($this->data);
-    }
-
-    /**
-     * @return void
-     */
-    public function next(): void
-    {
-        next($this->data);
-    }
-
-    /**
-     * @return void
-     */
-    public function prev(): void
-    {
-        prev($this->data);
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid(): bool
-    {
-        return key($this->data) !== null;
-    }
-
-    /**
-     * @return void
-     */
-    public function rewind(): void
-    {
-        reset($this->data);
-    }
-
-    /**
-     * @return void
-     */
-    public function end(): void
-    {
-        end($this->data);
+        return new BidirectionalIterableArrayAccessIteratorFixture($this->data);
     }
 
     /**

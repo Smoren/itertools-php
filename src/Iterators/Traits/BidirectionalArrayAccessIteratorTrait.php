@@ -4,21 +4,28 @@ declare(strict_types=1);
 
 namespace IterTools\Iterators\Traits;
 
-use IterTools\Iterators\Interfaces\ArrayAccessIterator;
+use IterTools\Iterators\Interfaces\BidirectionalArrayAccessIterator;
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
+use IterTools\Iterators\BidirectionalArrayAccessForwardIterator;
+use IterTools\Iterators\BidirectionalArrayAccessReverseIterator;
 
 /**
+ * Trait for bidirectional iterable & ArrayAccess iterators.
+ *
+ * @see BidirectionalArrayAccessForwardIterator
+ * @see BidirectionalArrayAccessReverseIterator
+ *
  * @template TKey
  * @template TValue
  *
  * @phpstan-type TArrayKey = (int&TKey)|(string&TKey)
- * @phpstan-type ArrayLike = array<TArrayKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
+ * @phpstan-type IterableArrayAccess = array<TArrayKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
  *
- * @implements ArrayAccessIterator<TKey, TValue>
+ * @implements BidirectionalArrayAccessIterator<TKey, TValue>
  *
- * @property ArrayLike $data
+ * @property IterableArrayAccess $data
  */
-trait ArrayAccessIteratorTrait
+trait BidirectionalArrayAccessIteratorTrait
 {
     /**
      * {@inheritDoc}

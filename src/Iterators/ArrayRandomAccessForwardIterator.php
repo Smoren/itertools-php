@@ -8,6 +8,8 @@ use IterTools\Iterators\Interfaces\RandomAccessIterator;
 use IterTools\Iterators\Traits\ArrayRandomAccessIteratorTrait;
 
 /**
+ * Read/write array random access iterator (forward in foreach loop).
+ *
  * @template TKey
  * @template TValue
  *

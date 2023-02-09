@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace IterTools\Tests\Iterators;
 
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
-use IterTools\Iterators\ArrayAccessForwardIterator;
+use IterTools\Iterators\BidirectionalArrayAccessForwardIterator;
 use IterTools\Stream;
-use IterTools\Tests\Fixture\RandomAccessFixture;
+use IterTools\Tests\Fixture\BidirectionalIterableArrayAccessFixture;
+use IterTools\Tests\Fixture\BidirectionalIterableArrayAccessIteratorFixture;
 
 /**
- * @phpstan-type ArrayLike = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
+ * @phpstan-type IterableArrayAccess = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
  */
-class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
+class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @dataProvider dataProviderDirectRead
-     * @param ArrayLike $input
+     * @dataProvider dataProviderDirectReadArray
+     * @dataProvider dataProviderDirectReadIterator
+     * @dataProvider dataProviderDirectReadIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -26,7 +29,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -57,10 +60,8 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderDirectRead(): array
+    public function dataProviderDirectReadArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [],
@@ -77,6 +78,17 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [0, 1, 2],
                 [1, 2, 3],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderDirectReadIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([]),
                 [],
@@ -96,18 +108,46 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForReverseRead
-     * @param ArrayLike $input
+     * @return array[]
+     */
+    public function dataProviderDirectReadIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+            ],
+            [
+                $wrap([1]),
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 1, 2],
+                [1, 2, 3],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForReverseReadArray
+     * @dataProvider dataProviderForReverseReadIterator
+     * @dataProvider dataProviderForReverseReadIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseRead($input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByReverting($input, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
         $iterator = $iterator->reverse();
 
         // When
@@ -122,12 +162,37 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @dataProvider dataProviderForReverseReadArray
+     * @dataProvider dataProviderForReverseReadIterator
+     * @dataProvider dataProviderForReverseReadIteratorAggregate
+     * @param IterableArrayAccess $input
+     * @param array $expectedKeys
+     * @param array $expectedValues
+     * @return void
+     */
+    public function testReverseReadByUsingPrev($input, array $expectedKeys, array $expectedValues): void
+    {
+        // Given
+        $resultKeys = [];
+        $resultValues = [];
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
+
+        // When
+        for ($iterator->end(); $iterator->valid(); $iterator->prev()) {
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
+        }
+
+        // Then
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
+    }
+
+    /**
      * @return array[]
      */
-    public function dataProviderForReverseRead(): array
+    public function dataProviderForReverseReadArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [],
@@ -144,6 +209,17 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [2, 1, 0],
                 [3, 2, 1],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForReverseReadIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([]),
                 [],
@@ -163,8 +239,36 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForBidirectionalRead
-     * @param ArrayLike $input
+     * @return array[]
+     */
+    public function dataProviderForReverseReadIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+            ],
+            [
+                $wrap([1]),
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [2, 1, 0],
+                [3, 2, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForBidirectionalReadArray
+     * @dataProvider dataProviderForBidirectionalReadIterator
+     * @dataProvider dataProviderForBidirectionalReadIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -174,7 +278,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -197,10 +301,8 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForBidirectionalRead(): array
+    public function dataProviderForBidirectionalReadArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [],
@@ -217,6 +319,17 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForBidirectionalReadIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([]),
                 [],
@@ -236,8 +349,36 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForReadByIndexes
-     * @param ArrayLike $input
+     * @return array[]
+     */
+    public function dataProviderForBidirectionalReadIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+            ],
+            [
+                $wrap([1]),
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 1, 2, 2, 1, 0],
+                [1, 2, 3, 3, 2, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForReadByIndexesArray
+     * @dataProvider dataProviderForReadByIndexesIterator
+     * @dataProvider dataProviderForReadByIndexesIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -247,7 +388,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
 
         // When
         for ($i=0; $i<count($input); ++$i) {
@@ -267,10 +408,8 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForReadByIndexes(): array
+    public function dataProviderForReadByIndexesArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [],
@@ -287,6 +426,17 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [0, 1, 2],
                 [1, 2, 3],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForReadByIndexesIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([]),
                 [],
@@ -306,8 +456,36 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForNotFullBidirectionalRead
-     * @param ArrayLike $input
+     * @return array[]
+     */
+    public function dataProviderForReadByIndexesIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+            ],
+            [
+                $wrap([1]),
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 1, 2],
+                [1, 2, 3],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForNotFullBidirectionalReadArray
+     * @dataProvider dataProviderForNotFullBidirectionalReadIterator
+     * @dataProvider dataProviderForNotFullBidirectionalReadIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param int $readCount
      * @param array $expectedKeys
      * @param array $expectedValues
@@ -318,7 +496,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
 
         // When
         $iterator->rewind();
@@ -351,10 +529,8 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForNotFullBidirectionalRead(): array
+    public function dataProviderForNotFullBidirectionalReadArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [1, 2, 3, 4, 5],
@@ -362,6 +538,17 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [1, 2, 3, 4, 3, 2, 1, 5, 4, 3, 2, 1],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForNotFullBidirectionalReadIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([1, 2, 3, 4, 5]),
                 3,
@@ -372,8 +559,27 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForWrite
-     * @param ArrayLike $input
+     * @return array[]
+     */
+    public function dataProviderForNotFullBidirectionalReadIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 3, 2, 1, 5, 4, 3, 2, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForWriteArray
+     * @dataProvider dataProviderForWriteIterator
+     * @dataProvider dataProviderForWriteIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param callable $modifier
      * @param array $expectedStep1
      * @param array $expectedStep2
@@ -382,7 +588,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     public function testWrite($input, callable $modifier, array $expectedStep1, array $expectedStep2): void
     {
         // Given
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -405,10 +611,8 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForWrite(): array
+    public function dataProviderForWriteArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [1, 2, 3, 4, 5],
@@ -416,6 +620,17 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [2, 3, 4, 5, 6],
                 [3, 4, 5, 6, 7],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForWriteIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([1, 2, 3, 4, 5]),
                 fn ($value) => $value + 1,
@@ -426,8 +641,27 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForUnset
-     * @param ArrayLike $input
+     * @return array[]
+     */
+    public function dataProviderForWriteIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                fn ($value) => $value + 1,
+                [2, 3, 4, 5, 6],
+                [3, 4, 5, 6, 7],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForUnsetArray
+     * @dataProvider dataProviderForUnsetIterator
+     * @dataProvider dataProviderForUnsetIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param callable $predicate
      * @param array $expected
      * @return void
@@ -435,7 +669,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     public function testUnset($input, callable $predicate, array $expected): void
     {
         // Given
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -449,8 +683,10 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForUnset
-     * @param ArrayLike $input
+     * @dataProvider dataProviderForUnsetArray
+     * @dataProvider dataProviderForUnsetIterator
+     * @dataProvider dataProviderForUnsetIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param callable $predicate
      * @param array $expected
      * @return void
@@ -458,7 +694,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     public function testUnsetReversed($input, callable $predicate, array $expected): void
     {
         // Given
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
         $iterator = $iterator->reverse();
 
         // When
@@ -475,16 +711,25 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForUnset(): array
+    public function dataProviderForUnsetArray(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
-
         return [
             [
                 [1, 2, 3, 4, 5],
                 fn ($value) => $value % 2 === 0,
                 [1, 3, 5],
             ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForUnsetIterator(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
             [
                 $wrap([1, 2, 3, 4, 5]),
                 fn ($value) => $value % 2 === 0,
@@ -493,11 +738,27 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @return array[]
+     */
+    public function dataProviderForUnsetIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
+
+        return [
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                fn ($value) => $value % 2 === 0,
+                [1, 3, 5],
+            ],
+        ];
+    }
 
     /**
-     * @dataProvider dataProviderForAddNewItems
-     * @dataProvider dataProviderForAddNewItemsArrayAccess
-     * @param ArrayLike $input
+     * @dataProvider dataProviderForAddNewItemsArray
+     * @dataProvider dataProviderForAddNewItemsIterator
+     * @dataProvider dataProviderForAddNewItemsIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param array $toAdd
      * @param array $expected
      * @return void
@@ -505,7 +766,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     public function testAddNewItems($input, array $toAdd, array $expected): void
     {
         // Given
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
         $result = [];
 
         // When
@@ -521,7 +782,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function dataProviderForAddNewItems(): array
+    public function dataProviderForAddNewItemsArray(): array
     {
         return [
             [
@@ -552,9 +813,42 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function dataProviderForAddNewItemsArrayAccess(): array
+    public function dataProviderForAddNewItemsIterator(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+            ],
+            [
+                $wrap([]),
+                [1],
+                [1],
+            ],
+            [
+                $wrap([]),
+                [1, 2, 3],
+                [1, 2, 3],
+            ],
+            [
+                $wrap([1]),
+                [2, 3, 4, 5],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+        ];
+    }
+
+    public function dataProviderForAddNewItemsIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
 
         return [
             [
@@ -586,9 +880,10 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForAddNewItemsAssociative
-     * @dataProvider dataProviderForAddNewItemsAssociativeArrayAccess
-     * @param ArrayLike $input
+     * @dataProvider dataProviderForAddNewItemsAssociativeArray
+     * @dataProvider dataProviderForAddNewItemsAssociativeIterator
+     * @dataProvider dataProviderForAddNewItemsAssociativeIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param array $toAdd
      * @param array $expected
      * @return void
@@ -596,7 +891,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     public function testAddNewItemsAssociative($input, array $toAdd, array $expected): void
     {
         // Given
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
         $result = [];
 
         // When
@@ -612,7 +907,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function dataProviderForAddNewItemsAssociative(): array
+    public function dataProviderForAddNewItemsAssociativeArray(): array
     {
         return [
             [
@@ -648,9 +943,47 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function dataProviderForAddNewItemsAssociativeArrayAccess(): array
+    public function dataProviderForAddNewItemsAssociativeIterator(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [1],
+                [1],
+            ],
+            [
+                $wrap([]),
+                [1 => 1],
+                [1 => 1],
+            ],
+            [
+                $wrap([]),
+                [1, 2, 'a' => 3],
+                [1, 2, 'a' => 3],
+            ],
+            [
+                $wrap([1]),
+                [2, 3, 4, 5],
+                [2, 3, 4, 5],
+            ],
+            [
+                $wrap([1]),
+                [1 => 2, 'a' => 3, 10 => 4],
+                [1, 2, 'a' => 3, 10 => 4],
+            ],
+            [
+                $wrap([1, -2, 3, -4]),
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+        ];
+    }
+
+    public function dataProviderForAddNewItemsAssociativeIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
 
         return [
             [
@@ -687,9 +1020,10 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForUnsetForward
-     * @dataProvider dataProviderForUnsetForwardArrayAccess
-     * @param ArrayLike $input
+     * @dataProvider dataProviderForUnsetForwardArray
+     * @dataProvider dataProviderForUnsetForwardIterator
+     * @dataProvider dataProviderForUnsetForwardIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param int $offset
      * @param array $keysToUnset
      * @param array $expected
@@ -701,7 +1035,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $result = [];
 
         // When
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
         $i = 0;
         for ($iterator->rewind(); $i < $offset; $iterator->next()) {
             $result[] = $iterator->current();
@@ -722,7 +1056,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function dataProviderForUnsetForward(): array
+    public function dataProviderForUnsetForwardArray(): array
     {
         return [
             [
@@ -782,9 +1116,71 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function dataProviderForUnsetForwardArrayAccess(): array
+    public function dataProviderForUnsetForwardIterator(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
+            [
+                $wrap([1]),
+                1,
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [0],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [1],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [0, 1],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [0, 1, 2],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [0, 2],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6]),
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6]),
+                4,
+                [0, 2, 3],
+                [1, 2, 3, 4, 5, 6],
+            ],
+        ];
+    }
+
+    public function dataProviderForUnsetForwardIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
 
         return [
             [
@@ -845,9 +1241,10 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForUnsetReverse
-     * @dataProvider dataProviderForUnsetReverseArrayAccess
-     * @param ArrayLike $input
+     * @dataProvider dataProviderForUnsetReverseArray
+     * @dataProvider dataProviderForUnsetReverseIterator
+     * @dataProvider dataProviderForUnsetReverseIteratorAggregate
+     * @param IterableArrayAccess $input
      * @param int $offset
      * @param array $keysToUnset
      * @param array $expected
@@ -859,7 +1256,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $result = [];
 
         // When
-        $iterator = new ArrayAccessForwardIterator($input);
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
         $i = 0;
         for ($iterator->end(); $i < $offset; $iterator->prev()) {
             $result[] = $iterator->current();
@@ -880,7 +1277,7 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function dataProviderForUnsetReverse(): array
+    public function dataProviderForUnsetReverseArray(): array
     {
         return [
             [
@@ -940,9 +1337,71 @@ class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function dataProviderForUnsetReverseArrayAccess(): array
+    public function dataProviderForUnsetReverseIterator(): array
     {
-        $wrap = fn (array $data) => new RandomAccessFixture($data);
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
+
+        return [
+            [
+                $wrap([1]),
+                1,
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [4],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [3],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [4, 3],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [4, 3, 2],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [2, 4],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                3,
+                [4, 2, 0],
+                [5, 4, 3, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6]),
+                3,
+                [1, 3, 5],
+                [6, 5, 4, 3, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6]),
+                4,
+                [5, 3, 2],
+                [6, 5, 4, 3, 2, 1],
+            ],
+        ];
+    }
+
+    public function dataProviderForUnsetReverseIteratorAggregate(): array
+    {
+        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
 
         return [
             [

@@ -6,9 +6,11 @@ namespace IterTools\Iterators;
 
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Iterators\Interfaces\ReversibleIterator;
-use IterTools\Iterators\Traits\ArrayIteratorTrait;
+use IterTools\Iterators\Traits\ArrayBidirectionalIteratorTrait;
 
 /**
+ * Bidirectional array read iterator (forward in foreach loop).
+ *
  * @template TKey
  * @template TValue
  *
@@ -17,12 +19,12 @@ use IterTools\Iterators\Traits\ArrayIteratorTrait;
  * @implements BidirectionalIterator<TArrayKey, TValue>
  * @implements ReversibleIterator<TArrayKey, TValue>
  */
-class ArrayForwardIterator implements BidirectionalIterator, ReversibleIterator
+class ArrayBidirectionalForwardIterator implements BidirectionalIterator, ReversibleIterator
 {
     /**
-     * @use ArrayIteratorTrait<TKey, TValue>
+     * @use ArrayBidirectionalIteratorTrait<TKey, TValue>
      */
-    use ArrayIteratorTrait;
+    use ArrayBidirectionalIteratorTrait;
 
     /**
      * @var array<TArrayKey, TValue>
@@ -72,10 +74,10 @@ class ArrayForwardIterator implements BidirectionalIterator, ReversibleIterator
     /**
      * {@inheritDoc}
      *
-     * @return ArrayReverseIterator<TArrayKey, TValue>
+     * @return ArrayBidirectionalReverseIterator<TArrayKey, TValue>
      */
-    public function reverse(): ArrayReverseIterator
+    public function reverse(): ArrayBidirectionalReverseIterator
     {
-        return new ArrayReverseIterator($this->data);
+        return new ArrayBidirectionalReverseIterator($this->data);
     }
 }

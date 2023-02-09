@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace IterTools\Iterators\Traits;
 
-use IterTools\Iterators\Interfaces\ArrayAccessIterator;
+use IterTools\Iterators\ArrayBidirectionalForwardIterator;
+use IterTools\Iterators\ArrayBidirectionalReverseIterator;
+use IterTools\Iterators\Interfaces\BidirectionalArrayAccessIterator;
 
 /**
+ * Trait for bidirectional array iterators.
+ *
+ * @see ArrayBidirectionalForwardIterator
+ * @see ArrayBidirectionalReverseIterator
+ *
  * @template TKey
  * @template TValue
  *
- * @implements ArrayAccessIterator<TKey, TValue>
+ * @implements BidirectionalArrayAccessIterator<TKey, TValue>
  *
  * @property array<TKey, TValue> $data
  */
-trait ArrayIteratorTrait
+trait ArrayBidirectionalIteratorTrait
 {
     /**
      * {@inheritDoc}

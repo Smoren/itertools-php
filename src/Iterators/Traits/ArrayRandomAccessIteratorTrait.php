@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace IterTools\Iterators\Traits;
 
+use IterTools\Iterators\ArrayRandomAccessForwardIterator;
+use IterTools\Iterators\ArrayRandomAccessReverseIterator;
 use IterTools\Iterators\Interfaces\RandomAccessIterator;
 
 /**
+ * Trait for array random access iterators.
+ *
+ * @see ArrayRandomAccessForwardIterator
+ * @see ArrayRandomAccessReverseIterator
+ *
  * @template TKey
  * @template TValue
  *
