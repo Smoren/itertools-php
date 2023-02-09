@@ -81,7 +81,7 @@ class ArrayRandomAccessForwardIterator implements RandomAccessIterator
      */
     public function rewind(): void
     {
-        $this->currentKey = $this->keys[$this->currentIndex = 0];
+        $this->currentKey = $this->keys[$this->currentIndex = 0] ?? null;
     }
 
     /**
@@ -89,13 +89,13 @@ class ArrayRandomAccessForwardIterator implements RandomAccessIterator
      */
     public function end(): void
     {
-        $this->currentKey = $this->keys[$this->currentIndex = count($this->keys) - 1];
+        $this->currentKey = $this->keys[$this->currentIndex = count($this->keys) - 1] ?? null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function move(int $steps): void
+    public function movePointer(int $steps): void
     {
         $this->currentIndex += $steps;
 

@@ -17,5 +17,5 @@ interface RandomAccessIterator extends ArrayAccessIterator
      *
      * @return void
      */
-    public function move(int $steps): void;
+    public function movePointer(int $steps): void;
 }
