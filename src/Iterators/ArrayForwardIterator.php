@@ -6,6 +6,7 @@ namespace IterTools\Iterators;
 
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Iterators\Interfaces\ReversibleIterator;
+use IterTools\Iterators\Traits\ArrayIteratorTrait;
 
 /**
  * @template TKey
@@ -18,6 +19,11 @@ use IterTools\Iterators\Interfaces\ReversibleIterator;
  */
 class ArrayForwardIterator implements BidirectionalIterator, ReversibleIterator
 {
+    /**
+     * @use ArrayIteratorTrait<TKey, TValue>
+     */
+    use ArrayIteratorTrait;
+
     /**
      * @var array<TArrayKey, TValue>
      */
@@ -34,24 +40,6 @@ class ArrayForwardIterator implements BidirectionalIterator, ReversibleIterator
     /**
      * {@inheritDoc}
      */
-    public function current()
-    {
-        return current($this->data);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return TArrayKey|null
-     */
-    public function key()
-    {
-        return key($this->data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function next(): void
     {
         next($this->data);
@@ -63,14 +51,6 @@ class ArrayForwardIterator implements BidirectionalIterator, ReversibleIterator
     public function prev(): void
     {
         prev($this->data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function valid(): bool
-    {
-        return $this->key() !== null;
     }
 
     /**
