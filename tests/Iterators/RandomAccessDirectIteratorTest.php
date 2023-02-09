@@ -222,7 +222,14 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
 
         // And when
         $iterator = $iterator->reverse();
+        while ($iterator->valid()) {
+            $result[] = $iterator->current();
+            $iterator->next();
+        }
 
+        // And when
+        $iterator = $iterator->reverse();
+        $iterator->rewind();
         while ($iterator->valid()) {
             $result[] = $iterator->current();
             $iterator->next();
@@ -243,12 +250,12 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 [1, 2, 3, 4, 5],
                 3,
-                [1, 2, 3, 4, 3, 2, 1],
+                [1, 2, 3, 4, 3, 2, 1, 1, 2, 3, 4, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
                 3,
-                [1, 2, 3, 4, 3, 2, 1],
+                [1, 2, 3, 4, 3, 2, 1, 1, 2, 3, 4, 5],
             ],
         ];
     }
