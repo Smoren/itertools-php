@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace IterTools\Iterators;
 
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
