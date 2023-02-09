@@ -21,14 +21,14 @@ interface ReversibleIterator extends \Iterator
     public function current();
 
     /**
-     * @return void
-     */
-    public function next(): void;
-
-    /**
      * @return TKey|null
      */
     public function key();
+
+    /**
+     * @return void
+     */
+    public function next(): void;
 
     /**
      * @return bool

@@ -5,7 +5,7 @@ namespace IterTools\Iterators;
 /**
  * @template TKey
  * @template TValue
- * @phpstan-type RandomAccess = array<TKey, TValue>|(\ArrayAccess<TKey, TValue>&iterable<TKey, TValue>)
+ * @phpstan-type RandomAccess = array<TKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
  *
  * @implements RandomAccessIterator<TKey, TValue>
  */
@@ -29,6 +29,9 @@ class RandomAccessReverseIterator implements RandomAccessIterator
      */
     public function current()
     {
+        if ($this->data instanceof BidirectionalIterator) {
+            return $this->data->current();
+        }
         return current($this->data);
     }
 
@@ -37,7 +40,11 @@ class RandomAccessReverseIterator implements RandomAccessIterator
      */
     public function next(): void
     {
-        prev($this->data);
+        if ($this->data instanceof BidirectionalIterator) {
+            $this->data->prev();
+        } else {
+            prev($this->data);
+        }
     }
 
     /**
@@ -45,7 +52,11 @@ class RandomAccessReverseIterator implements RandomAccessIterator
      */
     public function prev(): void
     {
-        next($this->data);
+        if ($this->data instanceof BidirectionalIterator) {
+            $this->data->next();
+        } else {
+            next($this->data);
+        }
     }
 
     /**
@@ -53,6 +64,9 @@ class RandomAccessReverseIterator implements RandomAccessIterator
      */
     public function key()
     {
+        if ($this->data instanceof BidirectionalIterator) {
+            return $this->data->key();
+        }
         return key($this->data);
     }
 
@@ -61,6 +75,9 @@ class RandomAccessReverseIterator implements RandomAccessIterator
      */
     public function valid(): bool
     {
+        if ($this->data instanceof BidirectionalIterator) {
+            return $this->data->valid();
+        }
         return key($this->data) !== null;
     }
 
@@ -69,7 +86,20 @@ class RandomAccessReverseIterator implements RandomAccessIterator
      */
     public function rewind(): void
     {
-        end($this->data);
+        if ($this->data instanceof BidirectionalIterator) {
+            $this->data->end();
+        } else {
+            end($this->data);
+        }
+    }
+
+    public function end(): void
+    {
+        if ($this->data instanceof BidirectionalIterator) {
+            $this->data->rewind();
+        } else {
+            reset($this->data);
+        }
     }
 
     /**

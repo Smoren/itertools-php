@@ -11,14 +11,14 @@ namespace IterTools\Iterators;
 interface BidirectionalIterator extends \Iterator
 {
     /**
-     * @return void
-     */
-    public function prev(): void;
-
-    /**
      * @return TValue|false
      */
     public function current();
+
+    /**
+     * @return TKey|null
+     */
+    public function key();
 
     /**
      * @return void
@@ -26,9 +26,9 @@ interface BidirectionalIterator extends \Iterator
     public function next(): void;
 
     /**
-     * @return TKey|null
+     * @return void
      */
-    public function key();
+    public function prev(): void;
 
     /**
      * @return bool
@@ -39,4 +39,9 @@ interface BidirectionalIterator extends \Iterator
      * @return void
      */
     public function rewind(): void;
+
+    /**
+     * @return void
+     */
+    public function end(): void;
 }

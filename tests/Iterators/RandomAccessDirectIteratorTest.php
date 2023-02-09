@@ -4,17 +4,22 @@ declare(strict_types=1);
 
 namespace IterTools\Tests\Iterators;
 
+use IterTools\Iterators\BidirectionalIterator;
 use IterTools\Iterators\RandomAccessDirectIterator;
+use IterTools\Tests\Fixture\RandomAccessFixture;
 
+/**
+ * @phpstan-type RandomAccess = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
+ */
 class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderDirectRead
-     * @param array $input
+     * @param RandomAccess $input
      * @param array $expected
      * @return void
      */
-    public function testDirectRead(array $input, array $expected): void
+    public function testDirectRead($input, array $expected): void
     {
         // Given
         $result = [];
@@ -36,7 +41,7 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
         foreach ($iterator as $item) {
             $result[] = $item;
         }
-        
+
         // Then
         $this->assertEquals($expected, $result);
     }
@@ -46,6 +51,8 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
      */
     public function dataProviderDirectRead(): array
     {
+        $wrap = fn (array $data) => new RandomAccessFixture($data);
+
         return [
             [
                 [],
@@ -59,16 +66,28 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
                 [1, 2, 3],
                 [1, 2, 3],
             ],
+            [
+                $wrap([]),
+                [],
+            ],
+            [
+                $wrap([1]),
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [1, 2, 3],
+            ],
         ];
     }
 
     /**
      * @dataProvider dataProviderForReverseRead
-     * @param array $input
+     * @param RandomAccess $input
      * @param array $expected
      * @return void
      */
-    public function testReverseRead(array $input, array $expected): void
+    public function testReverseRead($input, array $expected): void
     {
         // Given
         $result = [];
@@ -89,6 +108,8 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
      */
     public function dataProviderForReverseRead(): array
     {
+        $wrap = fn (array $data) => new RandomAccessFixture($data);
+
         return [
             [
                 [],
@@ -102,16 +123,28 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
                 [1, 2, 3],
                 [3, 2, 1],
             ],
+            [
+                $wrap([]),
+                [],
+            ],
+            [
+                $wrap([1]),
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [3, 2, 1],
+            ],
         ];
     }
 
     /**
      * @dataProvider dataProviderForBidirectionalRead
-     * @param array $input
+     * @param RandomAccess $input
      * @param array $expected
      * @return void
      */
-    public function testBidirectionalRead(array $input, array $expected): void
+    public function testBidirectionalRead($input, array $expected): void
     {
         // Given
         $result = [];
@@ -137,6 +170,8 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
      */
     public function dataProviderForBidirectionalRead(): array
     {
+        $wrap = fn (array $data) => new RandomAccessFixture($data);
+
         return [
             [
                 [],
@@ -150,17 +185,29 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
                 [1, 2, 3],
                 [1, 2, 3, 3, 2, 1],
             ],
+            [
+                $wrap([]),
+                [],
+            ],
+            [
+                $wrap([1]),
+                [1, 1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [1, 2, 3, 3, 2, 1],
+            ],
         ];
     }
 
     /**
      * @dataProvider dataProviderForNotFullBidirectionalRead
-     * @param array $input
+     * @param RandomAccess $input
      * @param int $readCount
      * @param array $expected
      * @return void
      */
-    public function testNotFullBidirectionalRead(array $input, int $readCount, array $expected): void
+    public function testNotFullBidirectionalRead($input, int $readCount, array $expected): void
     {
         // Given
         $result = [];
@@ -190,9 +237,16 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
      */
     public function dataProviderForNotFullBidirectionalRead(): array
     {
+        $wrap = fn (array $data) => new RandomAccessFixture($data);
+
         return [
             [
                 [1, 2, 3, 4, 5],
+                3,
+                [1, 2, 3, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
                 3,
                 [1, 2, 3, 4, 3, 2, 1],
             ],
