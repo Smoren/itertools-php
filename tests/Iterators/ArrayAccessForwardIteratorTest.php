@@ -10,13 +10,13 @@ use IterTools\Stream;
 use IterTools\Tests\Fixture\RandomAccessFixture;
 
 /**
- * @phpstan-type RandomAccess = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
+ * @phpstan-type ArrayLike = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
  */
-class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
+class ArrayAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderDirectRead
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -97,7 +97,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForReverseRead
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -164,7 +164,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForBidirectionalRead
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -237,7 +237,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForReadByIndexes
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
@@ -307,7 +307,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForNotFullBidirectionalRead
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param int $readCount
      * @param array $expectedKeys
      * @param array $expectedValues
@@ -373,7 +373,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForWrite
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param callable $modifier
      * @param array $expectedStep1
      * @param array $expectedStep2
@@ -427,7 +427,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForUnset
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param callable $predicate
      * @param array $expected
      * @return void
@@ -450,7 +450,7 @@ class RandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider dataProviderForUnset
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      * @param callable $predicate
      * @param array $expected
      * @return void

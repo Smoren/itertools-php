@@ -12,19 +12,19 @@ use IterTools\Iterators\Interfaces\ArrayAccessIterator;
  * @template TValue
  *
  * @phpstan-type TArrayKey = (int&TKey)|(string&TKey)
- * @phpstan-type RandomAccess = array<TArrayKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
+ * @phpstan-type ArrayLike = array<TArrayKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
  *
  * @implements ArrayAccessIterator<TKey, TValue>
  */
 class ArrayAccessForwardIterator implements ArrayAccessIterator
 {
     /**
-     * @var RandomAccess
+     * @var ArrayLike
      */
     protected $data;
 
     /**
-     * @param RandomAccess $input
+     * @param ArrayLike $input
      */
     public function __construct(&$input)
     {
