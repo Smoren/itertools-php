@@ -104,7 +104,11 @@ class RandomAccessFixture implements BidirectionalIterator, \ArrayAccess, \Count
      */
     public function offsetSet($offset, $value): void
     {
-        $this->data[$offset] = $value;
+        if ($offset === null) {
+            $this->data[] = $value;
+        } else {
+            $this->data[$offset] = $value;
+        }
     }
 
     /**

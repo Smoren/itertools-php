@@ -33,11 +33,11 @@ class ArrayRandomAccessReverseIterator implements RandomAccessIterator
     /**
      * @var int
      */
-    protected int $currentIndex;
+    protected int $currentIndex = 0;
     /**
      * @var TArrayKey|null
      */
-    protected $currentKey;
+    protected $currentKey = null;
 
     /**
      * @param array<TArrayKey, TValue> $data
@@ -98,16 +98,7 @@ class ArrayRandomAccessReverseIterator implements RandomAccessIterator
     public function movePointer(int $steps): void
     {
         $this->currentIndex -= $steps;
-
-        if ($this->currentIndex < 0) {
-            $this->currentIndex = -1;
-            $this->currentKey = null;
-        }
-
-        if ($this->currentIndex >= count($this->keys)) {
-            $this->currentIndex = count($this->keys);
-            $this->currentKey = null;
-        }
+        $this->updateCurrentKey();
     }
 
     /**

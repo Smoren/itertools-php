@@ -68,12 +68,16 @@ trait ArrayRandomAccessIteratorTrait
     /**
      * {@inheritDoc}
      *
-     * @param TKey $offset
+     * @param TKey|null $offset
      * @param TValue $value
      */
     public function offsetSet($offset, $value): void
     {
-        if (!$this->offsetExists($offset)) {
+        if ($offset === null) {
+            /** @phpstan-ignore-next-line */
+            $this->data[] = $value;
+            $this->updateKeys();
+        } elseif (!$this->offsetExists($offset)) {
             $this->data[$offset] = $value;
             $this->updateKeys();
         } else {
@@ -97,8 +101,6 @@ trait ArrayRandomAccessIteratorTrait
 
             unset($this->data[$offset]);
             $this->updateKeys();
-        } else {
-            unset($this->data[$offset]);
         }
     }
 
@@ -108,5 +110,21 @@ trait ArrayRandomAccessIteratorTrait
     protected function updateKeys(): void
     {
         $this->keys = array_keys($this->data);
+    }
+
+    /**
+     * @return void
+     */
+    protected function updateCurrentKey(): void
+    {
+        if ($this->currentIndex < 0) {
+            $this->currentIndex = -1;
+            $this->currentKey = null;
+        } elseif ($this->currentIndex >= count($this->keys)) {
+            $this->currentIndex = count($this->keys);
+            $this->currentKey = null;
+        } else {
+            $this->currentKey = $this->keys[$this->currentIndex];
+        }
     }
 }

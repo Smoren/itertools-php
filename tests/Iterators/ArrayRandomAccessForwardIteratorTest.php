@@ -400,4 +400,537 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider dataProviderForAddNewItems
+     * @param array $input
+     * @param array $toAdd
+     * @param array $expected
+     * @return void
+     */
+    public function testAddNewItems(array $input, array $toAdd, array $expected): void
+    {
+        // Given
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $result = [];
+
+        // When
+        foreach ($toAdd as $item) {
+            $iterator[] = $item;
+        }
+
+        // And when
+        foreach ($iterator as $value) {
+            $result[] = $value;
+        }
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForAddNewItems(): array
+    {
+        return [
+            [
+                [],
+                [],
+                [],
+            ],
+            [
+                [],
+                [1],
+                [1],
+            ],
+            [
+                [],
+                [1, 2, 3],
+                [1, 2, 3],
+            ],
+            [
+                [1],
+                [2, 3, 4, 5],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3],
+                [4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForAddNewItemsAssociative
+     * @param array $input
+     * @param array $toAdd
+     * @param array $expected
+     * @return void
+     */
+    public function testAddNewItemsAssociative(array $input, array $toAdd, array $expected): void
+    {
+        // Given
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $result = [];
+
+        // When
+        foreach ($toAdd as $key => $item) {
+            $iterator[$key] = $item;
+        }
+
+        // And when
+        foreach ($iterator as $key => $value) {
+            $result[$key] = $value;
+        }
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForAddNewItemsAssociative(): array
+    {
+        return [
+            [
+                [],
+                [1],
+                [1],
+            ],
+            [
+                [],
+                [1 => 1],
+                [1 => 1],
+            ],
+            [
+                [],
+                [1, 2, 'a' => 3],
+                [1, 2, 'a' => 3],
+            ],
+            [
+                [1],
+                [2, 3, 4, 5],
+                [2, 3, 4, 5],
+            ],
+            [
+                [1],
+                [1 => 2, 'a' => 3, 10 => 4],
+                [1, 2, 'a' => 3, 10 => 4],
+            ],
+            [
+                [1, -2, 3, -4],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForUnsetForward
+     * @param array $input
+     * @param int $offset
+     * @param array $keysToUnset
+     * @param array $expected
+     * @return void
+     */
+    public function testUnsetForward(array $input, int $offset, array $keysToUnset, array $expected): void
+    {
+        // Given
+        $result = [];
+
+        // When
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $i = 0;
+        for ($iterator->rewind(); $i < $offset; $iterator->next()) {
+            $result[] = $iterator->current();
+            ++$i;
+        }
+
+        // And when
+        foreach ($keysToUnset as $key) {
+            unset($iterator[$key]);
+        }
+
+        // And when
+        for (; $iterator->valid(); $iterator->next()) {
+            $result[] = $iterator->current();
+        }
+
+        // Then
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForUnsetForward(): array
+    {
+        return [
+            [
+                [1],
+                1,
+                [0],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [0],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [1],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [0, 1],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [0, 1, 2],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [0, 2],
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6],
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6],
+                4,
+                [0, 2, 3],
+                [1, 2, 3, 4, 5, 6],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForUnsetReverse
+     * @param array $input
+     * @param int $offset
+     * @param array $keysToUnset
+     * @param array $expected
+     * @return void
+     */
+    public function testUnsetReverse(array $input, int $offset, array $keysToUnset, array $expected): void
+    {
+        // Given
+        $result = [];
+
+        // When
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $i = 0;
+        for ($iterator->end(); $i < $offset; $iterator->prev()) {
+            $result[] = $iterator->current();
+            ++$i;
+        }
+
+        // And when
+        foreach ($keysToUnset as $key) {
+            unset($iterator[$key]);
+        }
+
+        // And when
+        for (; $iterator->valid(); $iterator->prev()) {
+            $result[] = $iterator->current();
+        }
+
+        // Then
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForUnsetReverse(): array
+    {
+        return [
+            [
+                [1],
+                1,
+                [0],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [4],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [3],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [4, 3],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [4, 3, 2],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [2, 4],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [4, 2, 0],
+                [5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6],
+                3,
+                [1, 3, 5],
+                [6, 5, 4, 3, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6],
+                4,
+                [5, 3, 2],
+                [6, 5, 4, 3, 2, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForMovePointerForward
+     * @param array $input
+     * @param int $step
+     * @param array $expected
+     * @return void
+     */
+    public function testMovePointerForward(array $input, int $step, array $expected): void
+    {
+        // Given
+        $result = [];
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+
+        // When
+        for ($iterator->rewind(); $iterator->valid(); $iterator->movePointer($step)) {
+            $result[] = $iterator->current();
+        }
+
+        // Then
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForMovePointerForward(): array
+    {
+        return [
+            [
+                [1],
+                1,
+                [1],
+            ],
+            [
+                [1],
+                2,
+                [1],
+            ],
+            [
+                [1],
+                3,
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                1,
+                [1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                2,
+                [1, 3, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [1, 4],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                4,
+                [1, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                5,
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                6,
+                [1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForMovePointerReverse
+     * @param array $input
+     * @param int $step
+     * @param array $expected
+     * @return void
+     */
+    public function testMovePointerReverse(array $input, int $step, array $expected): void
+    {
+        // Given
+        $result = [];
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+
+        // When
+        for ($iterator->end(); $iterator->valid(); $iterator->movePointer(-$step)) {
+            $result[] = $iterator->current();
+        }
+
+        // Then
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForMovePointerReverse(): array
+    {
+        return [
+            [
+                [1],
+                1,
+                [1],
+            ],
+            [
+                [1],
+                2,
+                [1],
+            ],
+            [
+                [1],
+                3,
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                1,
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                2,
+                [5, 3, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                3,
+                [5, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                4,
+                [5, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                5,
+                [5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                6,
+                [5],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForIsInvalidAfterLastItem
+     * @param array $input
+     * @return void
+     */
+    public function testIsInvalidAfterLastItem(array $input): void
+    {
+        // Given
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+
+        // When
+        $iterator->end();
+        $iterator->next();
+
+        // And when
+        for ($i = 0; $i < 3; ++$i) {
+            $iterator->next();
+
+            // Then
+            $this->assertFalse($iterator->valid());
+        }
+
+        // Then
+        $this->assertFalse($iterator->valid());
+    }
+
+    public function dataProviderForIsInvalidAfterLastItem(): array
+    {
+        return [
+            [[]],
+            [[1]],
+            [[1, 2]],
+            [[1, 2, 3]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForIsInvalidBeforeFirstItem
+     * @param array $input
+     * @return void
+     */
+    public function testIsInvalidBeforeFirstItem(array $input): void
+    {
+        // Given
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+
+        // When
+        $iterator->prev();
+
+        // Then
+        $this->assertFalse($iterator->valid());
+
+        // And when
+        for ($i = 0; $i < 3; ++$i) {
+            $iterator->prev();
+
+            // Then
+            $this->assertFalse($iterator->valid());
+        }
+
+        // And when
+        $iterator->rewind();
+        $iterator->prev();
+
+        // Then
+        $this->assertFalse($iterator->valid());
+    }
+
+    public function dataProviderForIsInvalidBeforeFirstItem(): array
+    {
+        return [
+            [[]],
+            [[1]],
+            [[1, 2]],
+            [[1, 2, 3]],
+        ];
+    }
 }

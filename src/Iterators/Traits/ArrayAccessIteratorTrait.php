@@ -79,8 +79,13 @@ trait ArrayAccessIteratorTrait
      */
     public function offsetSet($offset, $value): void
     {
-        /** @phpstan-ignore-next-line */
-        $this->data[$offset] = $value;
+        if ($offset === null) {
+            /** @phpstan-ignore-next-line */
+            $this->data[] = $value;
+        } else {
+            /** @phpstan-ignore-next-line */
+            $this->data[$offset] = $value;
+        }
     }
 
     /**
