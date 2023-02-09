@@ -73,11 +73,11 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @return RandomAccessDirectIterator<TKey, TValue>
+     * @return RandomAccessReverseIterator<TKey, TValue>
      */
-    public function reverse(): RandomAccessDirectIterator
+    public function reverse(): RandomAccessReverseIterator
     {
-        return new RandomAccessDirectIterator($this->data);
+        return new RandomAccessReverseIterator($this->data);
     }
 
     /**
