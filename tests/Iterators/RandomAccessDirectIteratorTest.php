@@ -16,34 +16,41 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderDirectRead
      * @param RandomAccess $input
-     * @param array $expected
+     * @param array $expectedKeys
+     * @param array $expectedValues
      * @return void
      */
-    public function testDirectRead($input, array $expected): void
+    public function testDirectRead($input, array $expectedKeys, array $expectedValues): void
     {
         // Given
-        $result = [];
+        $resultKeys = [];
+        $resultValues = [];
         $iterator = new RandomAccessDirectIterator($input);
 
         // When
-        foreach ($iterator as $item) {
-            $result[] = $item;
+        foreach ($iterator as $key => $value) {
+            $resultKeys[] = $key;
+            $resultValues[] = $value;
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
 
         // And When
-        $result = [];
+        $resultKeys = [];
+        $resultValues = [];
         $iterator = $iterator->reverse();
         $iterator = $iterator->reverse();
 
-        foreach ($iterator as $item) {
-            $result[] = $item;
+        foreach ($iterator as $key => $value) {
+            $resultKeys[] = $key;
+            $resultValues[] = $value;
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
     }
 
     /**
@@ -57,25 +64,31 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [0],
                 [1],
             ],
             [
                 [1, 2, 3],
+                [0, 1, 2],
                 [1, 2, 3],
             ],
             [
                 $wrap([]),
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [0],
                 [1],
             ],
             [
                 $wrap([1, 2, 3]),
+                [0, 1, 2],
                 [1, 2, 3],
             ],
         ];
@@ -84,23 +97,27 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForReverseRead
      * @param RandomAccess $input
-     * @param array $expected
+     * @param array $expectedKeys
+     * @param array $expectedValues
      * @return void
      */
-    public function testReverseRead($input, array $expected): void
+    public function testReverseRead($input, array $expectedKeys, array $expectedValues): void
     {
         // Given
-        $result = [];
+        $resultKeys = [];
+        $resultValues = [];
         $iterator = new RandomAccessDirectIterator($input);
         $iterator = $iterator->reverse();
 
         // When
-        foreach ($iterator as $item) {
-            $result[] = $item;
+        foreach ($iterator as $key => $value) {
+            $resultKeys[] = $key;
+            $resultValues[] = $value;
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
     }
 
     /**
@@ -114,25 +131,31 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [0],
                 [1],
             ],
             [
                 [1, 2, 3],
+                [2, 1, 0],
                 [3, 2, 1],
             ],
             [
                 $wrap([]),
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [0],
                 [1],
             ],
             [
                 $wrap([1, 2, 3]),
+                [2, 1, 0],
                 [3, 2, 1],
             ],
         ];
@@ -141,28 +164,33 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForBidirectionalRead
      * @param RandomAccess $input
-     * @param array $expected
+     * @param array $expectedKeys
+     * @param array $expectedValues
      * @return void
      */
-    public function testBidirectionalRead($input, array $expected): void
+    public function testBidirectionalRead($input, array $expectedKeys, array $expectedValues): void
     {
         // Given
-        $result = [];
+        $resultKeys = [];
+        $resultValues = [];
         $iterator = new RandomAccessDirectIterator($input);
 
         // When
-        foreach ($iterator as $item) {
-            $result[] = $item;
+        foreach ($iterator as $key => $value) {
+            $resultKeys[] = $key;
+            $resultValues[] = $value;
         }
 
         // And when
         $iterator = $iterator->reverse();
-        foreach ($iterator as $item) {
-            $result[] = $item;
+        foreach ($iterator as $key => $value) {
+            $resultKeys[] = $key;
+            $resultValues[] = $value;
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
     }
 
     /**
@@ -176,25 +204,31 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [0, 0],
                 [1, 1],
             ],
             [
                 [1, 2, 3],
+                [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
             ],
             [
                 $wrap([]),
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [0, 0],
                 [1, 1],
             ],
             [
                 $wrap([1, 2, 3]),
+                [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
             ],
         ];
@@ -204,39 +238,43 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForNotFullBidirectionalRead
      * @param RandomAccess $input
      * @param int $readCount
-     * @param array $expected
+     * @param array $expectedKeys
+     * @param array $expectedValues
      * @return void
      */
-    public function testNotFullBidirectionalRead($input, int $readCount, array $expected): void
+    public function testNotFullBidirectionalRead($input, int $readCount, array $expectedKeys, array $expectedValues): void
     {
         // Given
-        $result = [];
+        $resultKeys = [];
+        $resultValues = [];
         $iterator = new RandomAccessDirectIterator($input);
 
         // When
         $iterator->rewind();
         for ($i = 0; $i < $readCount; ++$i) {
-            $result[] = $iterator->current();
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
             $iterator->next();
         }
 
         // And when
-        $iterator = $iterator->reverse();
         while ($iterator->valid()) {
-            $result[] = $iterator->current();
-            $iterator->next();
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
+            $iterator->prev();
         }
 
         // And when
-        $iterator = $iterator->reverse();
-        $iterator->rewind();
+        $iterator->end();
         while ($iterator->valid()) {
-            $result[] = $iterator->current();
-            $iterator->next();
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
+            $iterator->prev();
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
     }
 
     /**
@@ -250,12 +288,14 @@ class RandomAccessDirectIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 [1, 2, 3, 4, 5],
                 3,
-                [1, 2, 3, 4, 3, 2, 1, 1, 2, 3, 4, 5],
+                [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 3, 2, 1, 5, 4, 3, 2, 1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
                 3,
-                [1, 2, 3, 4, 3, 2, 1, 1, 2, 3, 4, 5],
+                [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 3, 2, 1, 5, 4, 3, 2, 1],
             ],
         ];
     }
