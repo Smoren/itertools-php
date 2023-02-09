@@ -2,14 +2,19 @@
 
 namespace IterTools\Iterators;
 
+use IterTools\Iterators\Interfaces\BidirectionalIterator;
+use IterTools\Iterators\Interfaces\ArrayAccessIterator;
+
 /**
  * @template TKey
  * @template TValue
- * @phpstan-type RandomAccess = array<TKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
  *
- * @implements RandomAccessIterator<TKey, TValue>
+ * @phpstan-type TArrayKey = (int&TKey)|(string&TKey)
+ * @phpstan-type RandomAccess = array<TArrayKey, TValue>|(\ArrayAccess<TKey, TValue>&BidirectionalIterator<TKey, TValue>)
+ *
+ * @implements ArrayAccessIterator<TKey, TValue>
  */
-class RandomAccessDirectIterator implements RandomAccessIterator
+class ArrayAccessReverseIterator implements ArrayAccessIterator
 {
     /**
      * @var RandomAccess
@@ -19,13 +24,13 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     /**
      * @param RandomAccess $input
      */
-    public function __construct($input)
+    public function __construct(&$input)
     {
-        $this->data = $input;
+        $this->data = &$input;
     }
 
     /**
-     * @return TValue|false
+     * {@inheritDoc}
      */
     public function current()
     {
@@ -36,21 +41,9 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @return void
+     * {@inheritDoc}
      */
     public function next(): void
-    {
-        if ($this->data instanceof BidirectionalIterator) {
-            $this->data->next();
-        } else {
-            next($this->data);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function prev(): void
     {
         if ($this->data instanceof BidirectionalIterator) {
             $this->data->prev();
@@ -60,7 +53,19 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @return TKey|null
+     * {@inheritDoc}
+     */
+    public function prev(): void
+    {
+        if ($this->data instanceof BidirectionalIterator) {
+            $this->data->next();
+        } else {
+            next($this->data);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function key()
     {
@@ -71,29 +76,20 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
     public function valid(): bool
     {
         if ($this->data instanceof BidirectionalIterator) {
             return $this->data->valid();
         }
-        return key($this->data) !== null;
+        return $this->key() !== null;
     }
 
     /**
-     * @return void
+     * {@inheritDoc}
      */
     public function rewind(): void
-    {
-        if ($this->data instanceof BidirectionalIterator) {
-            $this->data->rewind();
-        } else {
-            reset($this->data);
-        }
-    }
-
-    public function end(): void
     {
         if ($this->data instanceof BidirectionalIterator) {
             $this->data->end();
@@ -103,17 +99,29 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @return RandomAccessReverseIterator<TKey, TValue>
+     * {@inheritDoc}
      */
-    public function reverse(): RandomAccessReverseIterator
+    public function end(): void
     {
-        return new RandomAccessReverseIterator($this->data);
+        if ($this->data instanceof BidirectionalIterator) {
+            $this->data->rewind();
+        } else {
+            reset($this->data);
+        }
     }
 
     /**
-     * @param TKey $offset
+     * {@inheritDoc}
      *
-     * @return bool
+     * @return ArrayAccessForwardIterator<TKey, TValue>
+     */
+    public function reverse(): ArrayAccessForwardIterator
+    {
+        return new ArrayAccessForwardIterator($this->data);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function offsetExists($offset): bool
     {
@@ -126,9 +134,7 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @param TKey $offset
-     *
-     * @return TValue
+     * {@inheritDoc}
      */
     public function offsetGet($offset)
     {
@@ -136,23 +142,18 @@ class RandomAccessDirectIterator implements RandomAccessIterator
     }
 
     /**
-     * @param TKey $offset
-     * @param TValue $value
-     *
-     * @return void
+     * {@inheritDoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         /** @phpstan-ignore-next-line */
         $this->data[$offset] = $value;
     }
 
     /**
-     * @param TKey $offset
-     *
-     * @return void
+     * {@inheritDoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }

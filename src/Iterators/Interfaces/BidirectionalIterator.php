@@ -1,6 +1,6 @@
 <?php
 
-namespace IterTools\Iterators;
+namespace IterTools\Iterators\Interfaces;
 
 /**
  * @template TKey

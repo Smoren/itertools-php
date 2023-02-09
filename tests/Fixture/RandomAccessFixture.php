@@ -2,13 +2,13 @@
 
 namespace IterTools\Tests\Fixture;
 
-use IterTools\Iterators\BidirectionalIterator;
+use IterTools\Iterators\Interfaces\BidirectionalIterator;
 
 /**
  * @template TKey
  * @template TValue
  */
-class RandomAccessFixture implements BidirectionalIterator, \ArrayAccess
+class RandomAccessFixture implements BidirectionalIterator, \ArrayAccess, \Countable
 {
     /**
      * @var array<TKey, TValue>
@@ -114,5 +114,13 @@ class RandomAccessFixture implements BidirectionalIterator, \ArrayAccess
     public function offsetUnset($offset)
     {
         unset($this->data[$offset]);
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return count($this->data);
     }
 }

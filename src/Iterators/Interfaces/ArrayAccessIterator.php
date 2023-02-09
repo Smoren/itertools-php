@@ -1,6 +1,6 @@
 <?php
 
-namespace IterTools\Iterators;
+namespace IterTools\Iterators\Interfaces;
 
 /**
  * @template TKey
@@ -10,6 +10,6 @@ namespace IterTools\Iterators;
  * @extends ReversibleIterator<TKey, TValue>
  * @extends \ArrayAccess<TKey, TValue>
  */
-interface RandomAccessIterator extends BidirectionalIterator, ReversibleIterator, \ArrayAccess
+interface ArrayAccessIterator extends BidirectionalIterator, ReversibleIterator, \ArrayAccess
 {
 }
