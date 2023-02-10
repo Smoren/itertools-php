@@ -13,7 +13,7 @@ use IterTools\Iterators\Traits\ArrayRandomAccessIteratorTrait;
  * @template TKey
  * @template TValue
  *
- * @phpstan-type TArrayKey = (int&TKey)|(string&TKey)
+ * @phpstan-type TArrayKey = TKey & array-key
  *
  * @implements RandomAccessIterator<TArrayKey, TValue>
  */
