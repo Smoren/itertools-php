@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace IterTools\Tests\Iterators;
 
 use IterTools\Iterators\ArrayRandomAccessForwardIterator;
+use IterTools\Iterators\ArrayRandomAccessReverseIterator;
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Stream;
 
@@ -1117,6 +1118,143 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             [[1]],
             [[1, 2]],
             [[1, 2, 3]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForReadMultipleIteratorsSimultaneously
+     * @param array $input
+     * @param array $expectedDirect
+     * @param array $expectedReverse
+     * @return void
+     */
+    public function testReadMultipleIteratorsSimultaneously(array $input, array $expectedDirect, array $expectedReverse): void
+    {
+        // Given
+        $iterator1 = new ArrayRandomAccessForwardIterator($input);
+        $iterator2 = new ArrayRandomAccessForwardIterator($input);
+        $iterator3 = new ArrayRandomAccessReverseIterator($input);
+        $iterator4 = $iterator2->reverse();
+        $iterator5 = $iterator3->reverse();
+
+        $result1 = [];
+        $result2 = [];
+        $result3 = [];
+        $result4 = [];
+        $result5 = [];
+
+        // When
+        $iterator1->rewind();
+        $iterator2->rewind();
+        $iterator3->rewind();
+        $iterator4->rewind();
+        $iterator5->rewind();
+
+        while (true) {
+            if (!$iterator1->valid() && !$iterator2->valid() && !$iterator3->valid() && !$iterator4->valid() && !$iterator5->valid()) {
+                break;
+            }
+
+            $result1[] = $iterator1->current();
+            $result2[] = $iterator2->current();
+            $result3[] = $iterator3->current();
+            $result4[] = $iterator4->current();
+            $result5[] = $iterator5->current();
+
+            $iterator1->next();
+            $iterator2->next();
+            $iterator3->next();
+            $iterator4->next();
+            $iterator5->next();
+        }
+
+        // Then
+        $this->assertEquals($expectedDirect, $result1);
+        $this->assertEquals($expectedDirect, $result2);
+        $this->assertEquals($expectedReverse, $result3);
+        $this->assertEquals($expectedReverse, $result4);
+        $this->assertEquals($expectedDirect, $result5);
+
+        // And when
+        $result1 = [];
+        $result2 = [];
+
+        $iterator1 = new ArrayRandomAccessForwardIterator($input);
+        $iterator2 = new ArrayRandomAccessForwardIterator($input);
+
+        $iterator1->rewind();
+        $iterator2->end();
+
+        while (true) {
+            if (!$iterator1->valid() && !$iterator2->valid()) {
+                break;
+            }
+
+            $result1[] = $iterator1->current();
+            $result2[] = $iterator2->current();
+
+            $iterator1->next();
+            $iterator2->prev();
+        }
+
+        // Then
+        $this->assertEquals($expectedDirect, $result1);
+        $this->assertEquals($expectedReverse, $result2);
+    }
+
+    public function dataProviderForReadMultipleIteratorsSimultaneously(): array
+    {
+        return [
+            [
+                [],
+                [],
+                [],
+            ],
+            [
+                [1],
+                [1],
+                [1],
+            ],
+            [
+                [null],
+                [null],
+                [null],
+            ],
+            [
+                [null, null],
+                [null, null],
+                [null, null],
+            ],
+            [
+                [1, 2, 3],
+                [1, 2, 3],
+                [3, 2, 1],
+            ],
+            [
+                [1, 1, 1],
+                [1, 1, 1],
+                [1, 1, 1],
+            ],
+            [
+                [1, 1, 2],
+                [1, 1, 2],
+                [2, 1, 1],
+            ],
+            [
+                [1.1, 2.2, 3.3],
+                [1.1, 2.2, 3.3],
+                [3.3, 2.2, 1.1],
+            ],
+            [
+                ['1', '2', '3'],
+                ['1', '2', '3'],
+                ['3', '2', '1'],
+            ],
+            [
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
         ];
     }
 }
