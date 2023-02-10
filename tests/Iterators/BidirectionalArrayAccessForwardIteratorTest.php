@@ -58,6 +58,37 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
     }
 
     /**
+     * @dataProvider dataProviderDirectReadArray
+     * @dataProvider dataProviderDirectReadIterator
+     * @dataProvider dataProviderDirectReadIteratorAggregate
+     * @param IterableArrayAccess $input
+     * @param array $expectedKeys
+     * @param array $expectedValues
+     * @return void
+     */
+    public function testReadByIndexes($input, array $expectedKeys, array $expectedValues): void
+    {
+        // Given
+        $resultKeys = [];
+        $resultValues = [];
+        $iterator = new BidirectionalArrayAccessForwardIterator($input);
+
+        // When
+        for ($i=0; $i<count($input); ++$i) {
+            if (!isset($iterator[$i])) {
+                $this->fail();
+            }
+
+            $resultKeys[] = $i;
+            $resultValues[] = $iterator[$i];
+        }
+
+        // Then
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
+    }
+
+    /**
      * @return array[]
      */
     public function dataProviderDirectReadArray(): array
@@ -74,9 +105,44 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1],
             ],
             [
+                [null],
+                [0],
+                [null],
+            ],
+            [
+                [null, null],
+                [0, 1],
+                [null, null],
+            ],
+            [
                 [1, 2, 3],
                 [0, 1, 2],
                 [1, 2, 3],
+            ],
+            [
+                [1, 1, 1],
+                [0, 1, 2],
+                [1, 1, 1],
+            ],
+            [
+                [1, 1, 2],
+                [0, 1, 2],
+                [1, 1, 2],
+            ],
+            [
+                [1.1, 2.2, 3.3],
+                [0, 1, 2],
+                [1.1, 2.2, 3.3],
+            ],
+            [
+                ['1', '2', '3'],
+                [0, 1, 2],
+                ['1', '2', '3'],
+            ],
+            [
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
             ],
         ];
     }
@@ -100,9 +166,44 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1],
             ],
             [
+                $wrap([null]),
+                [0],
+                [null],
+            ],
+            [
+                $wrap([null, null]),
+                [0, 1],
+                [null, null],
+            ],
+            [
                 $wrap([1, 2, 3]),
                 [0, 1, 2],
                 [1, 2, 3],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [0, 1, 2],
+                [1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [0, 1, 2],
+                [1, 1, 2],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [0, 1, 2],
+                [1.1, 2.2, 3.3],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [0, 1, 2],
+                ['1', '2', '3'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
             ],
         ];
     }
@@ -126,9 +227,44 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1],
             ],
             [
+                $wrap([null]),
+                [0],
+                [null],
+            ],
+            [
+                $wrap([null, null]),
+                [0, 1],
+                [null, null],
+            ],
+            [
                 $wrap([1, 2, 3]),
                 [0, 1, 2],
                 [1, 2, 3],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [0, 1, 2],
+                [1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [0, 1, 2],
+                [1, 1, 2],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [0, 1, 2],
+                [1.1, 2.2, 3.3],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [0, 1, 2],
+                ['1', '2', '3'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
             ],
         ];
     }
@@ -205,9 +341,44 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1],
             ],
             [
+                [null],
+                [0],
+                [null],
+            ],
+            [
+                [null, null],
+                [1, 0],
+                [null, null],
+            ],
+            [
                 [1, 2, 3],
                 [2, 1, 0],
                 [3, 2, 1],
+            ],
+            [
+                [1, 1, 1],
+                [2, 1, 0],
+                [1, 1, 1],
+            ],
+            [
+                [1, 1, 2],
+                [2, 1, 0],
+                [2, 1, 1],
+            ],
+            [
+                [1.1, 2.2, 3.3],
+                [2, 1, 0],
+                [3.3, 2.2, 1.1],
+            ],
+            [
+                ['1', '2', '3'],
+                [2, 1, 0],
+                ['3', '2', '1'],
+            ],
+            [
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
             ],
         ];
     }
@@ -231,9 +402,44 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1],
             ],
             [
+                $wrap([null]),
+                [0],
+                [null],
+            ],
+            [
+                $wrap([null, null]),
+                [1, 0],
+                [null, null],
+            ],
+            [
                 $wrap([1, 2, 3]),
                 [2, 1, 0],
                 [3, 2, 1],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [2, 1, 0],
+                [1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [2, 1, 0],
+                [2, 1, 1],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [2, 1, 0],
+                [3.3, 2.2, 1.1],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [2, 1, 0],
+                ['3', '2', '1'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
             ],
         ];
     }
@@ -257,9 +463,44 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1],
             ],
             [
+                $wrap([null]),
+                [0],
+                [null],
+            ],
+            [
+                $wrap([null, null]),
+                [1, 0],
+                [null, null],
+            ],
+            [
                 $wrap([1, 2, 3]),
                 [2, 1, 0],
                 [3, 2, 1],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [2, 1, 0],
+                [1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [2, 1, 0],
+                [2, 1, 1],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [2, 1, 0],
+                [3.3, 2.2, 1.1],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [2, 1, 0],
+                ['3', '2', '1'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
             ],
         ];
     }
@@ -310,6 +551,16 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [],
             ],
             [
+                [null],
+                [0, 0],
+                [null, null],
+            ],
+            [
+                [null, null],
+                [0, 1, 1, 0],
+                [null, null, null, null],
+            ],
+            [
                 [1],
                 [0, 0],
                 [1, 1],
@@ -318,6 +569,34 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [1, 2, 3],
                 [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
+            ],
+            [
+                [1, 1, 1],
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 1, 1, 1, 1],
+            ],
+            [
+                [1, 1, 2],
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 2, 2, 1, 1],
+            ],
+            [
+                [1.1, 2.2, 3.3],
+                [0, 1, 2, 2, 1, 0],
+                [1.1, 2.2, 3.3, 3.3, 2.2, 1.1],
+            ],
+            [
+                ['1', '2', '3'],
+                [0, 1, 2, 2, 1, 0],
+                ['1', '2', '3', '3', '2', '1'],
+            ],
+            [
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [
+                    1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
+                    (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
+                ],
             ],
         ];
     }
@@ -336,6 +615,16 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [],
             ],
             [
+                $wrap([null]),
+                [0, 0],
+                [null, null],
+            ],
+            [
+                $wrap([null, null]),
+                [0, 1, 1, 0],
+                [null, null, null, null],
+            ],
+            [
                 $wrap([1]),
                 [0, 0],
                 [1, 1],
@@ -344,6 +633,34 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 $wrap([1, 2, 3]),
                 [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 1, 1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 2, 2, 1, 1],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [0, 1, 2, 2, 1, 0],
+                [1.1, 2.2, 3.3, 3.3, 2.2, 1.1],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [0, 1, 2, 2, 1, 0],
+                ['1', '2', '3', '3', '2', '1'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [
+                    1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
+                    (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
+                ],
             ],
         ];
     }
@@ -362,6 +679,16 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [],
             ],
             [
+                $wrap([null]),
+                [0, 0],
+                [null, null],
+            ],
+            [
+                $wrap([null, null]),
+                [0, 1, 1, 0],
+                [null, null, null, null],
+            ],
+            [
                 $wrap([1]),
                 [0, 0],
                 [1, 1],
@@ -371,112 +698,33 @@ class BidirectionalArrayAccessForwardIteratorTest extends \PHPUnit\Framework\Tes
                 [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForReadByIndexesArray
-     * @dataProvider dataProviderForReadByIndexesIterator
-     * @dataProvider dataProviderForReadByIndexesIteratorAggregate
-     * @param IterableArrayAccess $input
-     * @param array $expectedKeys
-     * @param array $expectedValues
-     * @return void
-     */
-    public function testReadByIndexes($input, array $expectedKeys, array $expectedValues): void
-    {
-        // Given
-        $resultKeys = [];
-        $resultValues = [];
-        $iterator = new BidirectionalArrayAccessForwardIterator($input);
-
-        // When
-        for ($i=0; $i<count($input); ++$i) {
-            if (!isset($iterator[$i])) {
-                $this->fail();
-            }
-
-            $resultKeys[] = $i;
-            $resultValues[] = $iterator[$i];
-        }
-
-        // Then
-        $this->assertEquals($expectedKeys, $resultKeys);
-        $this->assertEquals($expectedValues, $resultValues);
-    }
-
-    /**
-     * @return array[]
-     */
-    public function dataProviderForReadByIndexesArray(): array
-    {
-        return [
             [
-                [],
-                [],
-                [],
+                $wrap([1, 1, 1]),
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 1, 1, 1, 1],
             ],
             [
-                [1],
-                [0],
-                [1],
+                $wrap([1, 1, 2]),
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 2, 2, 1, 1],
             ],
             [
-                [1, 2, 3],
-                [0, 1, 2],
-                [1, 2, 3],
-            ],
-        ];
-    }
-
-    /**
-     * @return array[]
-     */
-    public function dataProviderForReadByIndexesIterator(): array
-    {
-        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessIteratorFixture($data);
-
-        return [
-            [
-                $wrap([]),
-                [],
-                [],
+                $wrap([1.1, 2.2, 3.3]),
+                [0, 1, 2, 2, 1, 0],
+                [1.1, 2.2, 3.3, 3.3, 2.2, 1.1],
             ],
             [
-                $wrap([1]),
-                [0],
-                [1],
+                $wrap(['1', '2', '3']),
+                [0, 1, 2, 2, 1, 0],
+                ['1', '2', '3', '3', '2', '1'],
             ],
             [
-                $wrap([1, 2, 3]),
-                [0, 1, 2],
-                [1, 2, 3],
-            ],
-        ];
-    }
-
-    /**
-     * @return array[]
-     */
-    public function dataProviderForReadByIndexesIteratorAggregate(): array
-    {
-        $wrap = fn (array $data) => new BidirectionalIterableArrayAccessFixture($data);
-
-        return [
-            [
-                $wrap([]),
-                [],
-                [],
-            ],
-            [
-                $wrap([1]),
-                [0],
-                [1],
-            ],
-            [
-                $wrap([1, 2, 3]),
-                [0, 1, 2],
-                [1, 2, 3],
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [
+                    1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
+                    (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
+                ],
             ],
         ];
     }
