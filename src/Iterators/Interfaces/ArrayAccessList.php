@@ -24,7 +24,7 @@ interface ArrayAccessList extends \ArrayAccess, \Countable
     public function offsetGet($offset);
 
     /**
-     * @param int $offset
+     * @param int|null $offset
      * @param T $value
      *
      * @return void
