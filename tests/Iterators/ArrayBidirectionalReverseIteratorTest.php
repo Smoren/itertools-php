@@ -267,7 +267,7 @@ class ArrayBidirectionalReverseIteratorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [null, null],
-                [0, 1, 1, 0],
+                [1, 0, 0, 1],
                 [null, null, null, null],
             ],
             [
@@ -282,6 +282,7 @@ class ArrayBidirectionalReverseIteratorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [1, 1, 1],
+                [2, 1, 0, 0, 1, 2],
                 [1, 1, 1, 1, 1, 1],
             ],
             [
