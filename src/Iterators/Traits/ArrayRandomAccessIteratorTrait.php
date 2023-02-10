@@ -83,10 +83,11 @@ trait ArrayRandomAccessIteratorTrait
         if ($offset === null) {
             /** @phpstan-ignore-next-line */
             $this->data[] = $value;
-            $this->updateKeys();
+            /** @phpstan-ignore-next-line */
+            $this->keys[] = \array_key_last($this->data);
         } elseif (!$this->offsetExists($offset)) {
             $this->data[$offset] = $value;
-            $this->updateKeys();
+            $this->keys[] = $offset;
         } else {
             $this->data[$offset] = $value;
         }
