@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace IterTools\Iterators;
 
 use IterTools\Iterators\Interfaces\ArrayAccessList;
+use IterTools\Iterators\Interfaces\RandomAccessIterator;
 use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
 
 /**
@@ -15,8 +16,9 @@ use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
  * @extends ListBidirectionalForwardIterator<T>
  *
  * @implements ArrayAccessList<T>
+ * @implements RandomAccessIterator<int, T>
  */
-class ListRandomAccessForwardIterator extends ListBidirectionalForwardIterator implements ArrayAccessList
+class ListRandomAccessForwardIterator extends ListBidirectionalForwardIterator implements RandomAccessIterator, ArrayAccessList
 {
     /**
      * {@inheritDoc}
@@ -75,5 +77,19 @@ class ListRandomAccessForwardIterator extends ListBidirectionalForwardIterator i
     {
         /** @var ListRandomAccessReverseIterator<T> */
         return new ListRandomAccessReverseIterator($this->data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function movePointer(int $steps): void
+    {
+        $this->index += $steps;
+
+        if ($this->index < 0) {
+            $this->index = -1;
+        } elseif ($this->index >= count($this->data)) {
+            $this->index = count($this->data);
+        }
     }
 }
