@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace IterTools\Iterators;
 
-use IterTools\Iterators\Interfaces\ArrayAccessList;
 use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Iterators\Interfaces\ReversibleIterator;
 use IterTools\Iterators\Traits\ListBidirectionalIteratorTrait;
@@ -13,6 +12,8 @@ use IterTools\Iterators\Traits\ListBidirectionalIteratorTrait;
  * Read array list bidirectional iterator (forward in foreach loop).
  *
  * @template T
+ *
+ * @phpstan-type ArrayAccessList = \ArrayAccess<int, T>&\Countable
  *
  * @implements BidirectionalIterator<int, T>
  * @implements ReversibleIterator<int, T>
@@ -25,7 +26,7 @@ class ListBidirectionalForwardIterator implements BidirectionalIterator, Reversi
     use ListBidirectionalIteratorTrait;
 
     /**
-     * @var list<T>|ArrayAccessList<T>
+     * @var list<T>|ArrayAccessList
      */
     protected $data;
     /**
@@ -34,7 +35,7 @@ class ListBidirectionalForwardIterator implements BidirectionalIterator, Reversi
     protected int $index;
 
     /**
-     * @param list<T>|ArrayAccessList<T> $data
+     * @param list<T>|ArrayAccessList $data
      */
     public function __construct(&$data)
     {

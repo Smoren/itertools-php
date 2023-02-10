@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace IterTools\Tests\Iterators;
 
-use IterTools\Iterators\Interfaces\ArrayAccessList;
 use IterTools\Iterators\ListRandomAccessForwardIterator;
 use IterTools\Iterators\ListRandomAccessReverseIterator;
-use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Tests\Fixture\ArrayAccessListFixture;
 
 /**
- * @phpstan-type IterableArrayAccess = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
+ * @phpstan-type ArrayAccessList = \ArrayAccess<int, mixed>&\Countable
  */
 class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 {

@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace IterTools\Tests\Fixture;
 
-use IterTools\Iterators\Interfaces\ArrayAccessList;
-
 /**
- * @implements ArrayAccessList<mixed>
+ * @implements \ArrayAccess<mixed>
+ * @implements \Countable
  */
-class ArrayAccessListFixture implements ArrayAccessList
+class ArrayAccessListFixture implements \ArrayAccess, \Countable
 {
     /**
      * @var array<mixed>

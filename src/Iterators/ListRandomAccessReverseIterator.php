@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace IterTools\Iterators;
 
-use IterTools\Iterators\Interfaces\ArrayAccessList;
 use IterTools\Iterators\Interfaces\RandomAccessIterator;
 use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
 
@@ -15,17 +14,16 @@ use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
  *
  * @extends ListBidirectionalReverseIterator<T>
  *
- * @implements ArrayAccessList<T>
  * @implements RandomAccessIterator<int, T>
  */
-class ListRandomAccessReverseIterator extends ListBidirectionalReverseIterator implements RandomAccessIterator, ArrayAccessList
+class ListRandomAccessReverseIterator extends ListBidirectionalReverseIterator implements RandomAccessIterator
 {
     /**
      * {@inheritDoc}
      */
     public function offsetExists($offset): bool
     {
-        if ($this->data instanceof ArrayAccessList) {
+        if ($this->data instanceof \ArrayAccess) {
             return $this->data->offsetExists($offset);
         }
         return array_key_exists($offset, $this->data);
@@ -36,7 +34,7 @@ class ListRandomAccessReverseIterator extends ListBidirectionalReverseIterator i
      */
     public function offsetGet($offset)
     {
-        if ($this->data instanceof ArrayAccessList) {
+        if ($this->data instanceof \ArrayAccess) {
             return $this->data->offsetGet($offset);
         }
         return $this->data[$offset];

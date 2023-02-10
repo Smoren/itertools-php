@@ -6,12 +6,8 @@ namespace IterTools\Tests\Iterators;
 
 use IterTools\Iterators\ArrayRandomAccessForwardIterator;
 use IterTools\Iterators\ArrayRandomAccessReverseIterator;
-use IterTools\Iterators\Interfaces\BidirectionalIterator;
 use IterTools\Stream;
 
-/**
- * @phpstan-type IterableArrayAccess = array<int|string, mixed>|(\ArrayAccess<mixed, mixed>&BidirectionalIterator<mixed, mixed>)
- */
 class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
