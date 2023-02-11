@@ -229,13 +229,10 @@ class Single
     /**
      * Group data by a common data element.
      *
-     * The groupKeyFunction determines the key (or multiple keys) to group elements by.
-     *
-     * The itemKeyFunction (optional) determines the key of element in group.
+     * The groupKeyFunction determines the key to group elements by.
      *
      * @param iterable<mixed> $data
      * @param callable        $groupKeyFunction
-     * @param callable|null   $itemKeyFunction
      *
      * @return \Generator<mixed>
      */
