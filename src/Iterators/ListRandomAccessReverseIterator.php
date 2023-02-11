@@ -85,7 +85,12 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
      */
     public function offsetSet($offset, $value): void
     {
-        $this->offsetSetInternal(\count($this) - $offset - 1, $value);
+        $this->offsetSetInternal(
+            $offset === null
+                ? null
+                : \count($this) - $offset - 1,
+            $value
+        );
     }
 
     /**

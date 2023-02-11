@@ -131,11 +131,11 @@ trait ListRandomAccessIteratorTrait
      *
      * @throws \OutOfBoundsException
      */
-    protected function offsetSetInternal($offset, $value): void
+    protected function offsetSetInternal(?int $offset, $value): void
     {
         if ($offset === null) {
             $this->data[] = $value;
-        } elseif ($offset <= \count($this)) {
+        } elseif ($offset >= 0 && $offset <= \count($this)) {
             $this->data[$offset] = $value;
         } else {
             throw new \OutOfBoundsException();
@@ -158,6 +158,6 @@ trait ListRandomAccessIteratorTrait
             throw new \InvalidArgumentException();
         }
 
-        unset($this->data[$offset]);
+        array_pop($this->data);
     }
 }
