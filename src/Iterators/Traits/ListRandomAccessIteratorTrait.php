@@ -115,13 +115,10 @@ trait ListRandomAccessIteratorTrait
     /**
      * @param int $offset
      *
-     * @return T|null
+     * @return T
      */
     protected function offsetGetInternal(int $offset)
     {
-        if ($this->data instanceof \ArrayAccess) {
-            return $this->data->offsetGet($offset);
-        }
         return $this->data[$offset];
     }
 

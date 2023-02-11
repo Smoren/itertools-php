@@ -72,6 +72,8 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
 
     /**
      * {@inheritDoc}
+     *
+     * @return T
      */
     public function offsetGet($offset)
     {
@@ -80,6 +82,9 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
 
     /**
      * {@inheritDoc}
+     *
+     * @param int|null $offset
+     * @param T $value
      *
      * @throws \OutOfBoundsException
      */
@@ -95,6 +100,8 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
 
     /**
      * {@inheritDoc}
+     *
+     * @param int $offset
      *
      * @throws \OutOfBoundsException
      * @throws \InvalidArgumentException
