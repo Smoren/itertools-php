@@ -17,7 +17,7 @@ use IterTools\Iterators\Traits\ArrayRandomAccessIteratorTrait;
  *
  * @implements RandomAccessIterator<TArrayKey, TValue>
  */
-class ArrayRandomAccessReverseIterator implements RandomAccessIterator
+class ArrayRandomAccessReverseIterator implements RandomAccessIterator, \Countable
 {
     /**
      * @use ArrayRandomAccessIteratorTrait<TArrayKey, TValue>
@@ -69,8 +69,8 @@ class ArrayRandomAccessReverseIterator implements RandomAccessIterator
      */
     public function prev(): void
     {
-        if ($this->currentIndex >= count($this->keys)) {
-            $this->currentIndex = count($this->keys);
+        if ($this->currentIndex >= \count($this->keys)) {
+            $this->currentIndex = \count($this->keys);
             $this->currentKey = null;
             return;
         }
@@ -83,7 +83,7 @@ class ArrayRandomAccessReverseIterator implements RandomAccessIterator
      */
     public function rewind(): void
     {
-        $this->currentKey = $this->keys[$this->currentIndex = count($this->keys) - 1] ?? null;
+        $this->currentKey = $this->keys[$this->currentIndex = \count($this->keys) - 1] ?? null;
     }
 
     /**

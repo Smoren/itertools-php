@@ -5,65 +5,50 @@ declare(strict_types=1);
 namespace IterTools\Iterators;
 
 use IterTools\Iterators\Interfaces\RandomAccessIterator;
-use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
+use IterTools\Iterators\Traits\ListRandomAccessIteratorTrait;
 
 /**
  * Read/write array list array access iterator (forward in foreach loop).
  *
  * @template T
  *
- * @extends ListBidirectionalForwardIterator<T>
+ * @phpstan-type ArrayAccessList = \ArrayAccess<int, T>&\Countable
  *
  * @implements RandomAccessIterator<int, T>
  */
-class ListRandomAccessForwardIterator extends ListBidirectionalForwardIterator implements RandomAccessIterator
+class ListRandomAccessForwardIterator implements RandomAccessIterator, \Countable
 {
     /**
-     * {@inheritDoc}
+     * @use ListRandomAccessIteratorTrait<T>
      */
-    public function offsetExists($offset): bool
-    {
-        if ($this->data instanceof \ArrayAccess) {
-            return $this->data->offsetExists($offset);
-        }
-        return array_key_exists($offset, $this->data);
-    }
+    use ListRandomAccessIteratorTrait;
 
     /**
-     * {@inheritDoc}
+     * @var list<T>|ArrayAccessList
      */
-    public function offsetGet($offset)
-    {
-        if ($this->data instanceof \ArrayAccess) {
-            return $this->data->offsetGet($offset);
-        }
-        return $this->data[$offset];
-    }
+    protected $data;
+    /**
+     * @var int
+     */
+    protected int $index;
 
     /**
-     * {@inheritDoc}
-     *
-     * @throws \OutOfBoundsException
+     * @param list<T>|ArrayAccessList $data
      */
-    public function offsetSet($offset, $value): void
+    public function __construct(&$data)
     {
-        if ($offset === null) {
-            $this->data[] = $value;
-        } elseif ($offset <= count($this->data)) {
-            $this->data[$offset] = $value;
-        } else {
-            throw new \OutOfBoundsException();
-        }
+        $this->data = &$data;
+        $this->index = 0;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @throws \BadMethodCallException always
+     * @return T
      */
-    public function offsetUnset($offset): void
+    public function current()
     {
-        throw new BadMethodCallException('Not supported');
+        return $this->data[$this->index];
     }
 
     /**
@@ -80,14 +65,37 @@ class ListRandomAccessForwardIterator extends ListBidirectionalForwardIterator i
     /**
      * {@inheritDoc}
      */
-    public function movePointer(int $steps): void
+    public function offsetExists($offset): bool
     {
-        $this->index += $steps;
+        return $this->offsetExistsInternal($offset);
+    }
 
-        if ($this->index < 0) {
-            $this->index = -1;
-        } elseif ($this->index >= count($this->data)) {
-            $this->index = count($this->data);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->offsetGetInternal($offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws \OutOfBoundsException
+     */
+    public function offsetSet($offset, $value): void
+    {
+        $this->offsetSetInternal($offset, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws \OutOfBoundsException
+     * @throws \InvalidArgumentException
+     */
+    public function offsetUnset($offset): void
+    {
+        $this->offsetUnsetInternal($offset);
     }
 }

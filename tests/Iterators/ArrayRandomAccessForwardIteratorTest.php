@@ -1253,4 +1253,29 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider dataProviderForCount
+     * @param array $input
+     * @param int $expected
+     * @return void
+     */
+    public function testCount(array $input, int $expected): void
+    {
+        // When
+        $iterator = new ArrayRandomAccessForwardIterator($input);
+
+        // Then
+        $this->assertCount($expected, $iterator);
+    }
+
+    public function dataProviderForCount(): array
+    {
+        return [
+            [[], 0],
+            [[1], 1],
+            [[1, 2], 2],
+            [[1, 2, 3], 3],
+        ];
+    }
 }

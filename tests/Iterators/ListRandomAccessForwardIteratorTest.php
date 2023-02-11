@@ -175,8 +175,8 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForReverseReadArray
-     * @dataProvider dataProviderForReverseReadArrayAccess
+     * @dataProvider dataProviderForReverseReadByRevertingArray
+     * @dataProvider dataProviderForReverseReadByRevertingArrayAccess
      * @param array|ArrayAccessList $input
      * @param array $expectedKeys
      * @param array $expectedValues
@@ -202,8 +202,128 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForReverseReadArray
-     * @dataProvider dataProviderForReverseReadArrayAccess
+     * @return array[]
+     */
+    public function dataProviderForReverseReadByRevertingArray(): array
+    {
+        return [
+            [
+                [],
+                [],
+                [],
+            ],
+            [
+                [1],
+                [0],
+                [1],
+            ],
+            [
+                [null],
+                [0],
+                [null],
+            ],
+            [
+                [null, null],
+                [0, 1],
+                [null, null],
+            ],
+            [
+                [1, 2, 3],
+                [0, 1, 2],
+                [3, 2, 1],
+            ],
+            [
+                [1, 1, 1],
+                [0, 1, 2],
+                [1, 1, 1],
+            ],
+            [
+                [1, 1, 2],
+                [0, 1, 2],
+                [2, 1, 1],
+            ],
+            [
+                [1.1, 2.2, 3.3],
+                [0, 1, 2],
+                [3.3, 2.2, 1.1],
+            ],
+            [
+                ['1', '2', '3'],
+                [0, 1, 2],
+                ['3', '2', '1'],
+            ],
+            [
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForReverseReadByRevertingArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+            ],
+            [
+                $wrap([1]),
+                [0],
+                [1],
+            ],
+            [
+                $wrap([null]),
+                [0],
+                [null],
+            ],
+            [
+                $wrap([null, null]),
+                [0, 1],
+                [null, null],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 1, 2],
+                [3, 2, 1],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [0, 1, 2],
+                [1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [0, 1, 2],
+                [2, 1, 1],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [0, 1, 2],
+                [3.3, 2.2, 1.1],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [0, 1, 2],
+                ['3', '2', '1'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForReverseReadByUsingPrevArray
+     * @dataProvider dataProviderForReverseReadByUsingPrevArrayAccess
      * @param array|ArrayAccessList $input
      * @param array $expectedKeys
      * @param array $expectedValues
@@ -230,7 +350,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForReverseReadArray(): array
+    public function dataProviderForReverseReadByUsingPrevArray(): array
     {
         return [
             [
@@ -289,7 +409,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForReverseReadArrayAccess(): array
+    public function dataProviderForReverseReadByUsingPrevArrayAccess(): array
     {
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
@@ -398,7 +518,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [null, null],
-                [0, 1, 1, 0],
+                [0, 1, 0, 1],
                 [null, null, null, null],
             ],
             [
@@ -408,32 +528,32 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [1, 2, 3],
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1, 2, 3, 3, 2, 1],
             ],
             [
                 [1, 1, 1],
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1, 1, 1, 1, 1, 1],
             ],
             [
                 [1, 1, 2],
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1, 1, 2, 2, 1, 1],
             ],
             [
                 [1.1, 2.2, 3.3],
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1.1, 2.2, 3.3, 3.3, 2.2, 1.1],
             ],
             [
                 ['1', '2', '3'],
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 ['1', '2', '3', '3', '2', '1'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
-                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [
                     1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
                     (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
@@ -462,7 +582,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 $wrap([null, null]),
-                [0, 1, 1, 0],
+                [0, 1, 0, 1],
                 [null, null, null, null],
             ],
             [
@@ -472,32 +592,32 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 $wrap([1, 2, 3]),
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1, 2, 3, 3, 2, 1],
             ],
             [
                 $wrap([1, 1, 1]),
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1, 1, 1, 1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1, 1, 2, 2, 1, 1],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 [1.1, 2.2, 3.3, 3.3, 2.2, 1.1],
             ],
             [
                 $wrap(['1', '2', '3']),
-                [0, 1, 2, 2, 1, 0],
+                [0, 1, 2, 0, 1, 2],
                 ['1', '2', '3', '3', '2', '1'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
-                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [
                     1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
                     (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
@@ -1480,6 +1600,252 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForCount
+     * @param array $input
+     * @param int $expected
+     * @return void
+     */
+    public function testCount(array $input, int $expected): void
+    {
+        // When
+        $iterator = new ListRandomAccessForwardIterator($input);
+
+        // Then
+        $this->assertCount($expected, $iterator);
+    }
+
+    public function dataProviderForCount(): array
+    {
+        return [
+            [[], 0],
+            [[1], 1],
+            [[1, 2], 2],
+            [[1, 2, 3], 3],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForErrorOnSet
+     * @param array $input
+     * @param int $offset
+     * @return void
+     */
+    public function testErrorOnSet(array $input, int $offset): void
+    {
+        // Given
+        $iterator = new ListRandomAccessForwardIterator($input);
+
+        // Then
+        $this->expectException(\OutOfBoundsException::class);
+
+        // When
+        $iterator[$offset] = 1;
+    }
+
+    public function dataProviderForErrorOnSet(): array
+    {
+        return [
+            [[], 1],
+            [[], 2],
+            [[1], 2],
+            [[1], 3],
+            [[1, 2], 3],
+            [[1, 2], 4],
+            [[1, 2, 3], 4],
+            [[1, 2, 3], 5],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForPopUntilEmpty
+     * @param array $input
+     * @return void
+     */
+    public function testPopUntilEmpty(array $input): void
+    {
+        // Given
+        $iterator = new ListRandomAccessForwardIterator($input);
+        $result = [];
+
+        // When
+        while (count($iterator)) {
+            unset($iterator[count($iterator) - 1]);
+        }
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+
+        // Then
+        $this->assertEmpty($result);
+    }
+
+    public function dataProviderForPopUntilEmpty(): array
+    {
+        return [
+            [[1]],
+            [[1, 2]],
+            [[1, 2, 3]],
+            [[1, 2, 3, 4]],
+            [[1, 1, 1, 1, 1]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForIteratorIsInvalidAfterPop
+     * @param array $input
+     * @return void
+     */
+    public function testIteratorIsInvalidAfterPop(array $input): void
+    {
+        // Given
+        $iterator = new ListRandomAccessForwardIterator($input);
+
+        // When
+        foreach ($iterator as $i => $item) {
+            if ($i === count($iterator) - 1) {
+                // Then
+                $this->assertTrue($iterator->valid());
+
+                // And when
+                unset($iterator[$i]);
+
+                // Then
+                $this->assertFalse($iterator->valid());
+            }
+        }
+    }
+
+    public function dataProviderForIteratorIsInvalidAfterPop(): array
+    {
+        return [
+            [[1]],
+            [[1, 2]],
+            [[1, 2, 3]],
+            [[1, 2, 3, 4]],
+            [[1, 1, 1, 1, 1]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForUnsetFromTail
+     * @param array $input
+     * @param int $offset
+     * @param array $expected
+     * @return void
+     */
+    public function testUnsetFromTail(array $input, int $offset, array $expected): void
+    {
+        // Given
+        $iterator = new ListRandomAccessForwardIterator($input);
+        $result = [];
+
+        // When
+        unset($iterator[$offset]);
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+
+        // Then
+        $this->assertEquals($expected, $result);
+    }
+
+    public function dataProviderForUnsetFromTail(): array
+    {
+        return [
+            [
+                [1],
+                0,
+                [],
+            ],
+            [
+                [1, 2],
+                1,
+                [1],
+            ],
+            [
+                [1, 2, 3],
+                2,
+                [1, 2],
+            ],
+            [
+                [1, 2, 3, 4],
+                3,
+                [1, 2, 3],
+            ],
+            [
+                [1, 1, 1, 1, 1],
+                4,
+                [1, 1, 1, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForErrorOnUnsetFromMiddle
+     * @param array $input
+     * @param int $offset
+     * @return void
+     */
+    public function testErrorOnUnsetFromMiddle(array $input, int $offset): void
+    {
+        // Given
+        $iterator = new ListRandomAccessForwardIterator($input);
+
+        // Then
+        $this->expectException(\InvalidArgumentException::class);
+
+        // When
+        unset($iterator[$offset]);
+    }
+
+    public function dataProviderForErrorOnUnsetFromMiddle(): array
+    {
+        return [
+            [[1, 2], 0],
+            [[1, 2, 3], 0],
+            [[1, 2, 3], 1],
+            [[1, 2, 3, 4], 0],
+            [[1, 2, 3, 4], 1],
+            [[1, 2, 3, 4], 2],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForErrorOnUnsetOutOfBounds
+     * @param array $input
+     * @param int $offset
+     * @return void
+     */
+    public function testErrorOnUnsetOutOfBounds(array $input, int $offset): void
+    {
+        // Given
+        $iterator = new ListRandomAccessForwardIterator($input);
+
+        // Then
+        $this->expectException(\OutOfBoundsException::class);
+
+        // When
+        unset($iterator[$offset]);
+    }
+
+    public function dataProviderForErrorOnUnsetOutOfBounds(): array
+    {
+        return [
+            [[], 0],
+            [[], 1],
+            [[], -1],
+            [[1], 1],
+            [[1], -1],
+            [[1, 2, 3], 3],
+            [[1, 2, 3], -1],
+            [[1, 2, 3, 4], 4],
+            [[1, 2, 3, 4], 5],
+            [[1, 2, 3, 4], -1],
+            [[1, 2, 3, 4], -2],
         ];
     }
 }

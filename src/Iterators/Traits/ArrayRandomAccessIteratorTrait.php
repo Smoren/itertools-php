@@ -128,11 +128,19 @@ trait ArrayRandomAccessIteratorTrait
         if ($this->currentIndex < 0) {
             $this->currentIndex = -1;
             $this->currentKey = null;
-        } elseif ($this->currentIndex >= count($this->keys)) {
-            $this->currentIndex = count($this->keys);
+        } elseif ($this->currentIndex >= \count($this->keys)) {
+            $this->currentIndex = \count($this->keys);
             $this->currentKey = null;
         } else {
             $this->currentKey = $this->keys[$this->currentIndex];
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function count(): int
+    {
+        return \count($this->data);
     }
 }
