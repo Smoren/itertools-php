@@ -158,6 +158,10 @@ trait ListRandomAccessIteratorTrait
             throw new \InvalidArgumentException();
         }
 
-        array_pop($this->data);
+        if ($this->data instanceof \ArrayAccess) {
+            unset($this->data[$offset]);
+        } else {
+            array_pop($this->data);
+        }
     }
 }

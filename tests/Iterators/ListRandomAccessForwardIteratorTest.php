@@ -1604,12 +1604,13 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider dataProviderForCount
-     * @param array $input
+     * @dataProvider dataProviderForCountArray
+     * @dataProvider dataProviderForCountArrayAccess
+     * @param array|ArrayAccessList $input
      * @param int $expected
      * @return void
      */
-    public function testCount(array $input, int $expected): void
+    public function testCount($input, int $expected): void
     {
         // When
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1618,7 +1619,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertCount($expected, $iterator);
     }
 
-    public function dataProviderForCount(): array
+    public function dataProviderForCountArray(): array
     {
         return [
             [[], 0],
@@ -1628,13 +1629,26 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function dataProviderForCountArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([]), 0],
+            [$wrap([1]), 1],
+            [$wrap([1, 2]), 2],
+            [$wrap([1, 2, 3]), 3],
+        ];
+    }
+
     /**
-     * @dataProvider dataProviderForErrorOnSet
-     * @param array $input
+     * @dataProvider dataProviderForErrorOnSetArray
+     * @dataProvider dataProviderForErrorOnSetArrayAccess
+     * @param array|ArrayAccessList $input
      * @param int $offset
      * @return void
      */
-    public function testErrorOnSet(array $input, int $offset): void
+    public function testErrorOnSet($input, int $offset): void
     {
         // Given
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1646,7 +1660,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator[$offset] = 1;
     }
 
-    public function dataProviderForErrorOnSet(): array
+    public function dataProviderForErrorOnSetArray(): array
     {
         return [
             [[], 1],
@@ -1660,12 +1674,29 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function dataProviderForErrorOnSetArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([]), 1],
+            [$wrap([]), 2],
+            [$wrap([1]), 2],
+            [$wrap([1]), 3],
+            [$wrap([1, 2]), 3],
+            [$wrap([1, 2]), 4],
+            [$wrap([1, 2, 3]), 4],
+            [$wrap([1, 2, 3]), 5],
+        ];
+    }
+
     /**
-     * @dataProvider dataProviderForPopUntilEmpty
-     * @param array $input
+     * @dataProvider dataProviderForPopUntilEmptyArray
+     * @dataProvider dataProviderForPopUntilEmptyArrayAccess
+     * @param array|ArrayAccessList $input
      * @return void
      */
-    public function testPopUntilEmpty(array $input): void
+    public function testPopUntilEmpty($input): void
     {
         // Given
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1683,7 +1714,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($result);
     }
 
-    public function dataProviderForPopUntilEmpty(): array
+    public function dataProviderForPopUntilEmptyArray(): array
     {
         return [
             [[1]],
@@ -1694,12 +1725,26 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function dataProviderForPopUntilEmptyArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([1])],
+            [$wrap([1, 2])],
+            [$wrap([1, 2, 3])],
+            [$wrap([1, 2, 3, 4])],
+            [$wrap([1, 1, 1, 1, 1])],
+        ];
+    }
+
     /**
-     * @dataProvider dataProviderForIteratorIsInvalidAfterPop
-     * @param array $input
+     * @dataProvider dataProviderForIteratorIsInvalidAfterPopArray
+     * @dataProvider dataProviderForIteratorIsInvalidAfterPopArrayAccess
+     * @param array|ArrayAccessList $input
      * @return void
      */
-    public function testIteratorIsInvalidAfterPop(array $input): void
+    public function testIteratorIsInvalidAfterPop($input): void
     {
         // Given
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1719,7 +1764,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function dataProviderForIteratorIsInvalidAfterPop(): array
+    public function dataProviderForIteratorIsInvalidAfterPopArray(): array
     {
         return [
             [[1]],
@@ -1730,14 +1775,28 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function dataProviderForIteratorIsInvalidAfterPopArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([1])],
+            [$wrap([1, 2])],
+            [$wrap([1, 2, 3])],
+            [$wrap([1, 2, 3, 4])],
+            [$wrap([1, 1, 1, 1, 1])],
+        ];
+    }
+
     /**
-     * @dataProvider dataProviderForUnsetFromTail
-     * @param array $input
+     * @dataProvider dataProviderForUnsetFromTailArray
+     * @dataProvider dataProviderForUnsetFromTailArrayAccess
+     * @param array|ArrayAccessList $input
      * @param int $offset
      * @param array $expected
      * @return void
      */
-    public function testUnsetFromTail(array $input, int $offset, array $expected): void
+    public function testUnsetFromTail($input, int $offset, array $expected): void
     {
         // Given
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1753,7 +1812,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function dataProviderForUnsetFromTail(): array
+    public function dataProviderForUnsetFromTailArray(): array
     {
         return [
             [
@@ -1784,13 +1843,47 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function dataProviderForUnsetFromTailArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [
+                $wrap([1]),
+                0,
+                [],
+            ],
+            [
+                $wrap([1, 2]),
+                1,
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                2,
+                [1, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4]),
+                3,
+                [1, 2, 3],
+            ],
+            [
+                $wrap([1, 1, 1, 1, 1]),
+                4,
+                [1, 1, 1, 1],
+            ],
+        ];
+    }
+
     /**
-     * @dataProvider dataProviderForErrorOnUnsetFromMiddle
-     * @param array $input
+     * @dataProvider dataProviderForErrorOnUnsetFromMiddleArray
+     * @dataProvider dataProviderForErrorOnUnsetFromMiddleArrayAccess
+     * @param array|ArrayAccessList $input
      * @param int $offset
      * @return void
      */
-    public function testErrorOnUnsetFromMiddle(array $input, int $offset): void
+    public function testErrorOnUnsetFromMiddle($input, int $offset): void
     {
         // Given
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1802,7 +1895,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         unset($iterator[$offset]);
     }
 
-    public function dataProviderForErrorOnUnsetFromMiddle(): array
+    public function dataProviderForErrorOnUnsetFromMiddleArray(): array
     {
         return [
             [[1, 2], 0],
@@ -1814,13 +1907,28 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function dataProviderForErrorOnUnsetFromMiddleArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([1, 2]), 0],
+            [$wrap([1, 2, 3]), 0],
+            [$wrap([1, 2, 3]), 1],
+            [$wrap([1, 2, 3, 4]), 0],
+            [$wrap([1, 2, 3, 4]), 1],
+            [$wrap([1, 2, 3, 4]), 2],
+        ];
+    }
+
     /**
-     * @dataProvider dataProviderForErrorOnUnsetOutOfBounds
-     * @param array $input
+     * @dataProvider dataProviderForErrorOnUnsetOutOfBoundsArray
+     * @dataProvider dataProviderForErrorOnUnsetOutOfBoundsArrayAccess
+     * @param array|ArrayAccessList $input
      * @param int $offset
      * @return void
      */
-    public function testErrorOnUnsetOutOfBounds(array $input, int $offset): void
+    public function testErrorOnUnsetOutOfBounds($input, int $offset): void
     {
         // Given
         $iterator = new ListRandomAccessForwardIterator($input);
@@ -1832,7 +1940,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         unset($iterator[$offset]);
     }
 
-    public function dataProviderForErrorOnUnsetOutOfBounds(): array
+    public function dataProviderForErrorOnUnsetOutOfBoundsArray(): array
     {
         return [
             [[], 0],
@@ -1846,6 +1954,25 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             [[1, 2, 3, 4], 5],
             [[1, 2, 3, 4], -1],
             [[1, 2, 3, 4], -2],
+        ];
+    }
+
+    public function dataProviderForErrorOnUnsetOutOfBoundsArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([]), 0],
+            [$wrap([]), 1],
+            [$wrap([]), -1],
+            [$wrap([1]), 1],
+            [$wrap([1]), -1],
+            [$wrap([1, 2, 3]), 3],
+            [$wrap([1, 2, 3]), -1],
+            [$wrap([1, 2, 3, 4]), 4],
+            [$wrap([1, 2, 3, 4]), 5],
+            [$wrap([1, 2, 3, 4]), -1],
+            [$wrap([1, 2, 3, 4]), -2],
         ];
     }
 }
