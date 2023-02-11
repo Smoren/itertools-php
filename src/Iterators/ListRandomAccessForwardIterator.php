@@ -31,14 +31,28 @@ class ListRandomAccessForwardIterator implements RandomAccessIterator, \Countabl
      * @var int
      */
     protected int $index;
+    /**
+     * @var int
+     */
+    protected int $start;
+    /**
+     * @var int
+     */
+    protected int $end;
 
     /**
      * @param list<T>|ArrayAccessList $data
+     * @param int $start
+     * @param int|null $end
      */
-    public function __construct(&$data)
+    public function __construct(&$data, int $start = 0, ?int $end = null)
     {
         $this->data = &$data;
         $this->index = 0;
+        $this->start = \max($start, 0);
+        $this->end = ($end !== null)
+            ? \min($end, \count($this->data))
+            : \count($this->data);
     }
 
     /**
@@ -48,7 +62,7 @@ class ListRandomAccessForwardIterator implements RandomAccessIterator, \Countabl
      */
     public function current()
     {
-        return $this->data[$this->index];
+        return $this->data[$this->getIndex($this->index)];
     }
 
     /**
@@ -59,50 +73,23 @@ class ListRandomAccessForwardIterator implements RandomAccessIterator, \Countabl
     public function reverse(): ListRandomAccessReverseIterator
     {
         /** @var ListRandomAccessReverseIterator<T> */
-        return new ListRandomAccessReverseIterator($this->data);
+        return new ListRandomAccessReverseIterator(
+            $this->data,
+            \count($this->data) - $this->end,
+            \count($this->data) - $this->start
+        );
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function offsetExists($offset): bool
-    {
-        return $this->offsetExistsInternal($offset);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return T
-     */
-    public function offsetGet($offset)
-    {
-        return $this->offsetGetInternal($offset);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param int|null $offset
-     * @param T $value
-     *
-     * @throws \OutOfBoundsException
+     * @return int|null
      */
-    public function offsetSet($offset, $value): void
+    protected function getIndex(?int $offset): ?int
     {
-        $this->offsetSetInternal($offset, $value);
-    }
+        if ($offset === null) {
+            return null;
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param int $offset
-     *
-     * @throws \OutOfBoundsException
-     * @throws \InvalidArgumentException
-     */
-    public function offsetUnset($offset): void
-    {
-        $this->offsetUnsetInternal($offset);
+        return $this->start + $offset;
     }
 }

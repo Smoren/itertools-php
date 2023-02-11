@@ -18,16 +18,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderDirectReadArray
      * @dataProvider dataProviderDirectReadArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testDirectRead($input, array $expectedKeys, array $expectedValues): void
+    public function testDirectRead($input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -65,51 +66,127 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2],
                 [3, 2, 1],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2],
                 [2, 1, 1],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2],
                 [3.3, 2.2, 1.1],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2],
                 ['3', '2', '1'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [0, 1],
+                [9, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [0, 1],
+                [2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [0, 1],
+                [6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -126,51 +203,127 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [],
                 [0],
                 [1],
             ],
             [
                 $wrap([null]),
+                [],
                 [0],
                 [null],
             ],
             [
                 $wrap([null, null]),
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [0, 1, 2],
                 [3, 2, 1],
             ],
             [
                 $wrap([1, 1, 1]),
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
+                [],
                 [0, 1, 2],
                 [2, 1, 1],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
+                [],
                 [0, 1, 2],
                 [3.3, 2.2, 1.1],
             ],
             [
                 $wrap(['1', '2', '3']),
+                [],
                 [0, 1, 2],
                 ['3', '2', '1'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [0, 1],
+                [9, 8],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [0, 1],
+                [2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [0, 1],
+                [6, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }

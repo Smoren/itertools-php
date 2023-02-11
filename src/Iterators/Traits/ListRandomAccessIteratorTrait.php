@@ -19,7 +19,9 @@ use IterTools\Iterators\ListRandomAccessReverseIterator;
  * @implements BidirectionalIterator<int, T>
  *
  * @property list<T>|ArrayAccessList<T> $data
- * @property int $index
+ * @property int<0, max> $index
+ * @property int<0, max> $begin
+ * @property int<0, max> $end
  */
 trait ListRandomAccessIteratorTrait
 {
@@ -38,7 +40,7 @@ trait ListRandomAccessIteratorTrait
      */
     public function valid(): bool
     {
-        return $this->index >= 0 && $this->index < \count($this->data);
+        return $this->index >= 0 && $this->index < \count($this);
     }
 
     /**
@@ -82,7 +84,7 @@ trait ListRandomAccessIteratorTrait
      */
     public function count(): int
     {
-        return \count($this->data);
+        return $this->end - $this->start;
     }
 
     /**
@@ -100,12 +102,14 @@ trait ListRandomAccessIteratorTrait
     }
 
     /**
-     * @param int $offset
+     * {@inheritDoc}
      *
-     * @return bool
+     * @param int $offset
      */
-    protected function offsetExistsInternal(int $offset): bool
+    public function offsetExists($offset): bool
     {
+        /** @var int $offset */
+        $offset = $this->getIndex($offset);
         if ($this->data instanceof \ArrayAccess) {
             return $this->data->offsetExists($offset);
         }
@@ -113,26 +117,34 @@ trait ListRandomAccessIteratorTrait
     }
 
     /**
-     * @param int $offset
+     * {@inheritDoc}
      *
      * @return T
      */
-    protected function offsetGetInternal(int $offset)
+    public function offsetGet($offset)
     {
-        return $this->data[$offset];
+        return $this->data[$this->getIndex($offset)];
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @param int|null $offset
      * @param T $value
      *
      * @throws \OutOfBoundsException
      */
-    protected function offsetSetInternal(?int $offset, $value): void
+    public function offsetSet($offset, $value): void
     {
+        $offset = $this->getIndex($offset);
+
         if ($offset === null) {
             $this->data[] = $value;
-        } elseif ($offset >= 0 && $offset <= \count($this)) {
+            $this->end++;
+        } elseif ($offset >= $this->start && $offset === $this->end) {
+            $this->data[$offset] = $value;
+            $this->end++;
+        } elseif ($offset >= $this->start && $offset < $this->end) {
             $this->data[$offset] = $value;
         } else {
             throw new \OutOfBoundsException();
@@ -140,18 +152,22 @@ trait ListRandomAccessIteratorTrait
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @param int $offset
      *
      * @throws \OutOfBoundsException
      * @throws \InvalidArgumentException
      */
-    protected function offsetUnsetInternal(int $offset): void
+    public function offsetUnset($offset): void
     {
-        if ($offset >= \count($this) || $offset < 0) {
+        $offset = $this->getIndex($offset);
+
+        if ($offset >= $this->end || $offset < $this->start) {
             throw new \OutOfBoundsException();
         }
 
-        if ($offset < \count($this) - 1) {
+        if ($offset < $this->end - 1) {
             throw new \InvalidArgumentException();
         }
 
@@ -160,5 +176,7 @@ trait ListRandomAccessIteratorTrait
         } else {
             array_pop($this->data);
         }
+
+        $this->end--;
     }
 }

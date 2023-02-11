@@ -31,14 +31,28 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
      * @var int
      */
     protected int $index;
+    /**
+     * @var int
+     */
+    protected int $start;
+    /**
+     * @var int
+     */
+    protected int $end;
 
     /**
      * @param list<T>|ArrayAccessList $data
+     * @param int $start
+     * @param int|null $end
      */
-    public function __construct(&$data)
+    public function __construct(&$data, int $start = 0, ?int $end = null)
     {
         $this->data = &$data;
         $this->index = 0;
+        $this->start = \max($start, 0);
+        $this->end = ($end !== null)
+            ? \min($end, \count($this->data))
+            : \count($this->data);
     }
 
     /**
@@ -48,7 +62,7 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
      */
     public function current()
     {
-        return $this->data[\count($this) - $this->index - 1];
+        return $this->data[$this->getIndex($this->index)];
     }
 
     /**
@@ -59,55 +73,23 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
     public function reverse(): ListRandomAccessForwardIterator
     {
         /** @var ListRandomAccessForwardIterator<T> */
-        return new ListRandomAccessForwardIterator($this->data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function offsetExists($offset): bool
-    {
-        return $this->offsetExistsInternal(\count($this) - $offset - 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return T
-     */
-    public function offsetGet($offset)
-    {
-        return $this->offsetGetInternal(\count($this) - $offset - 1);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param int|null $offset
-     * @param T $value
-     *
-     * @throws \OutOfBoundsException
-     */
-    public function offsetSet($offset, $value): void
-    {
-        $this->offsetSetInternal(
-            $offset === null
-                ? null
-                : \count($this) - $offset - 1,
-            $value
+        return new ListRandomAccessForwardIterator(
+            $this->data,
+            \count($this->data) - $this->end,
+            \count($this->data) - $this->start
         );
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param int $offset
-     *
-     * @throws \OutOfBoundsException
-     * @throws \InvalidArgumentException
+     * @param int|null $offset
+     * @return int|null
      */
-    public function offsetUnset($offset): void
+    protected function getIndex(?int $offset): ?int
     {
-        $this->offsetUnsetInternal(\count($this) - $offset - 1);
+        if ($offset === null) {
+            return null;
+        }
+
+        return \count($this->data) - $this->start - $offset - 1;
     }
 }
