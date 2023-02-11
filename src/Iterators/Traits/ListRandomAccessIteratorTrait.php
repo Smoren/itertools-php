@@ -72,7 +72,7 @@ trait ListRandomAccessIteratorTrait
     /**
      * {@inheritDoc}
      */
-    public function end(): void
+    public function last(): void
     {
         $this->index = \count($this) - 1;
     }

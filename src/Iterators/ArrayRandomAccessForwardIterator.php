@@ -89,7 +89,7 @@ class ArrayRandomAccessForwardIterator implements RandomAccessIterator, \Countab
     /**
      * {@inheritDoc}
      */
-    public function end(): void
+    public function last(): void
     {
         $this->currentKey = $this->keys[$this->currentIndex = \count($this->keys) - 1] ?? null;
     }

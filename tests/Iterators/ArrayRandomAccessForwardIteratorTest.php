@@ -150,7 +150,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator = new ArrayRandomAccessForwardIterator($input);
 
         // When
-        for ($iterator->end(); $iterator->valid(); $iterator->prev()) {
+        for ($iterator->last(); $iterator->valid(); $iterator->prev()) {
             $resultKeys[] = $iterator->key();
             $resultValues[] = $iterator->current();
         }
@@ -432,7 +432,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         }
 
         // And when
-        $iterator->end();
+        $iterator->last();
         while ($iterator->valid()) {
             $resultKeys[] = $iterator->key();
             $resultValues[] = $iterator->current();
@@ -814,7 +814,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         // When
         $iterator = new ArrayRandomAccessForwardIterator($input);
         $i = 0;
-        for ($iterator->end(); $i < $offset; $iterator->prev()) {
+        for ($iterator->last(); $i < $offset; $iterator->prev()) {
             $result[] = $iterator->current();
             ++$i;
         }
@@ -980,7 +980,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator = new ArrayRandomAccessForwardIterator($input);
 
         // When
-        for ($iterator->end(); $iterator->valid(); $iterator->movePointer(-$step)) {
+        for ($iterator->last(); $iterator->valid(); $iterator->movePointer(-$step)) {
             $result[] = $iterator->current();
         }
 
@@ -1050,7 +1050,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator = new ArrayRandomAccessForwardIterator($input);
 
         // When
-        $iterator->end();
+        $iterator->last();
         $iterator->next();
 
         // And when
@@ -1179,7 +1179,7 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator2 = new ArrayRandomAccessForwardIterator($input);
 
         $iterator1->rewind();
-        $iterator2->end();
+        $iterator2->last();
 
         while (true) {
             if (!$iterator1->valid() && !$iterator2->valid()) {

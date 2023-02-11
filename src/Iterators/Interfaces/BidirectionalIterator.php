@@ -61,5 +61,5 @@ interface BidirectionalIterator extends \Iterator
      *
      * @return void
      */
-    public function end(): void;
+    public function last(): void;
 }

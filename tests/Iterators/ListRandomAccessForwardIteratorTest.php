@@ -337,7 +337,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator = new ListRandomAccessForwardIterator($input);
 
         // When
-        for ($iterator->end(); $iterator->valid(); $iterator->prev()) {
+        for ($iterator->last(); $iterator->valid(); $iterator->prev()) {
             $resultKeys[] = $iterator->key();
             $resultValues[] = $iterator->current();
         }
@@ -808,7 +808,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         }
 
         // And when
-        $iterator->end();
+        $iterator->last();
         while ($iterator->valid()) {
             $resultKeys[] = $iterator->key();
             $resultValues[] = $iterator->current();
@@ -1191,7 +1191,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator = new ListRandomAccessForwardIterator($input);
 
         // When
-        for ($iterator->end(); $iterator->valid(); $iterator->movePointer(-$step)) {
+        for ($iterator->last(); $iterator->valid(); $iterator->movePointer(-$step)) {
             $result[] = $iterator->current();
         }
 
@@ -1315,7 +1315,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator = new ListRandomAccessForwardIterator($input);
 
         // When
-        $iterator->end();
+        $iterator->last();
         $iterator->next();
 
         // And when
@@ -1470,7 +1470,7 @@ class ListRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         $iterator2 = new ListRandomAccessForwardIterator($input);
 
         $iterator1->rewind();
-        $iterator2->end();
+        $iterator2->last();
 
         while (true) {
             if (!$iterator1->valid() && !$iterator2->valid()) {
