@@ -47,6 +47,7 @@ class ArrayRandomAccessReverseIterator implements RandomAccessIterator, \Countab
     public function __construct(array &$data)
     {
         $this->data = &$data;
+        $this->currentIndex = \count($this) - 1;
         $this->updateKeys();
     }
 
