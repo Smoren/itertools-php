@@ -1137,6 +1137,39 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         }
 
         $this->assertEquals($expected, $result);
+        $this->assertEquals(
+            array_reverse($expected),
+            ($input instanceof ArrayAccessListFixture) ? $input->toArray() : $input
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForAddNewItemsArray
+     * @dataProvider dataProviderForAddNewItemsArrayAccess
+     * @param array|ArrayAccessList $input
+     * @param array $toAdd
+     * @param array $expected
+     * @return void
+     */
+    public function testAddNewItemsByIndex($input, array $toAdd, array $expected): void
+    {
+        // Given
+        $iterator = new ListRandomAccessReverseIterator($input);
+        $result = [];
+
+        // When
+        foreach ($toAdd as $item) {
+            $iterator[-1] = $item;
+        }
+
+        // And when
+        foreach ($iterator as $value) {
+            $result[] = $value;
+        }
+
+        // Then
+        $this->assertEquals($expected, $result);
+        //$this->assertEquals($expected, ($input instanceof ArrayAccessListFixture) ? $input->toArray() : $input);
     }
 
     public function dataProviderForAddNewItemsArray(): array
