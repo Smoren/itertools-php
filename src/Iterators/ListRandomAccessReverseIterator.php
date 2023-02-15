@@ -81,15 +81,88 @@ class ListRandomAccessReverseIterator implements RandomAccessIterator, \Countabl
     }
 
     /**
+     * Allowed updating existing item and appending item to the head of iterator.
+     *
+     * Appending denied if start of container and start of iterator do not match.
+     *
+     * {@inheritDoc}
+     *
      * @param int|null $offset
-     * @return int|null
+     * @param T $value
+     *
+     * @throws \OutOfBoundsException if index is out of iterator bounds
+     * @throws \RangeException when appending item if start of container and start of iterator do not match
      */
-    protected function getIndex(?int $offset): ?int
+    public function offsetSet($offset, $value): void
     {
-        if ($offset === null) {
-            return null;
+        $range = $this->end - $this->start;
+
+        if ($offset !== null && ($offset < -1 || $offset >= $range)) {
+            throw new \OutOfBoundsException();
         }
 
+        if ($this->start !== 0 && $offset === -1) {
+            throw new \RangeException();
+        }
+
+        if ($offset !== null && $offset !== -1) {
+            $this->data[$this->getIndex($offset)] = $value;
+            return;
+        }
+
+        if ($offset === null) {
+            $this->data[] = $value;
+        } else {
+            $this->data[$this->getIndex($offset)] = $value;
+        }
+
+        $this->end++;
+    }
+
+    /**
+     * Removing allowed only from head of the iterator.
+     *
+     * Removing denied if start of container and start of iterator do not match.
+     *
+     * {@inheritDoc}
+     *
+     * @param int $offset
+     *
+     * @throws \OutOfBoundsException if index is out of iterator bounds
+     * @throws \InvalidArgumentException if index is not 0
+     * @throws \RangeException if start of container and start of iterator do not match
+     */
+    public function offsetUnset($offset): void
+    {
+        $range = $this->end - $this->start;
+
+        if ($range === 0 || $offset < 0 || $offset >= $range) {
+            throw new \OutOfBoundsException();
+        }
+
+        if ($offset !== 0) {
+            throw new \InvalidArgumentException();
+        }
+
+        if ($this->start !== 0) {
+            throw new \RangeException();
+        }
+
+        if ($this->data instanceof \ArrayAccess) {
+            unset($this->data[$this->getIndex($offset)]);
+        } else {
+            array_pop($this->data);
+        }
+
+        $this->end--;
+    }
+
+    /**
+     * @param int $offset
+     * @return int
+     */
+    protected function getIndex(int $offset): int
+    {
         return \count($this->data) - $this->start - $offset - 1;
     }
 }

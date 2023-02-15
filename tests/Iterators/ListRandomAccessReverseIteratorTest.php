@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace IterTools\Tests\Iterators;
 
-use ArrayAccess as ArrayAccessList;
 use IterTools\Iterators\ListRandomAccessReverseIterator;
 use IterTools\Iterators\ListRandomAccessForwardIterator;
 use IterTools\Tests\Fixture\ArrayAccessListFixture;
@@ -332,16 +331,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForReverseReadByRevertingArray
      * @dataProvider dataProviderForReverseReadByRevertingArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseReadByReverting($input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByReverting($input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
         $iterator = $iterator->reverse();
 
         // When
@@ -365,51 +365,127 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2],
                 [1, 2, 3],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2],
                 [1, 1, 2],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2],
                 [1.1, 2.2, 3.3],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2],
                 ['1', '2', '3'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [0, 1],
+                [8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [0, 1],
+                [1, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [0, 1],
+                [5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -426,51 +502,127 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [],
                 [0],
                 [1],
             ],
             [
                 $wrap([null]),
+                [],
                 [0],
                 [null],
             ],
             [
                 $wrap([null, null]),
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [0, 1, 2],
                 [1, 2, 3],
             ],
             [
                 $wrap([1, 1, 1]),
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
+                [],
                 [0, 1, 2],
                 [1, 1, 2],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
+                [],
                 [0, 1, 2],
                 [1.1, 2.2, 3.3],
             ],
             [
                 $wrap(['1', '2', '3']),
+                [],
                 [0, 1, 2],
                 ['1', '2', '3'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [0, 1],
+                [8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [0, 1],
+                [1, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [0, 1],
+                [5, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -479,16 +631,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForReverseReadByUsingPrevArray
      * @dataProvider dataProviderForReverseReadByUsingPrevArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseReadByUsingPrev($input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByUsingPrev($input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         for ($iterator->last(); $iterator->valid(); $iterator->prev()) {
@@ -511,51 +664,127 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [1, 0],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [2, 1, 0],
                 [1, 2, 3],
             ],
             [
                 [1, 1, 1],
+                [],
                 [2, 1, 0],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [2, 1, 0],
                 [1, 1, 2],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [2, 1, 0],
                 [1.1, 2.2, 3.3],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [2, 1, 0],
                 ['1', '2', '3'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [8, 7, 6, 5, 4, 3, 2, 1, 0],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [7, 6, 5, 4, 3, 2, 1, 0],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [1, 0],
+                [8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [1, 0],
+                [1, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [1, 0],
+                [5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -572,69 +801,146 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [],
                 [0],
                 [1],
             ],
             [
                 $wrap([null]),
+                [],
                 [0],
                 [null],
             ],
             [
                 $wrap([null, null]),
+                [],
                 [1, 0],
                 [null, null],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [2, 1, 0],
                 [1, 2, 3],
             ],
             [
                 $wrap([1, 1, 1]),
+                [],
                 [2, 1, 0],
                 [1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
+                [],
                 [2, 1, 0],
                 [1, 1, 2],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
+                [],
                 [2, 1, 0],
                 [1.1, 2.2, 3.3],
             ],
             [
                 $wrap(['1', '2', '3']),
+                [],
                 [2, 1, 0],
                 ['1', '2', '3'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
                 [8, 7, 6, 5, 4, 3, 2, 1, 0],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [7, 6, 5, 4, 3, 2, 1, 0],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [1, 0],
+                [8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [1, 0],
+                [1, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [1, 0],
+                [5, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
 
     /**
-     * @dataProvider dataProviderForBidirectionalReadArray
-     * @dataProvider dataProviderForBidirectionalReadArrayAccess
+     * @dataProvider dataProviderForBidirectionalReadUsingRevertingArray
+     * @dataProvider dataProviderForBidirectionalReadUsingRevertingArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testBidirectionalRead($input, array $expectedKeys, array $expectedValues): void
+    public function testBidirectionalReadUsingReverting($input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -657,61 +963,137 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForBidirectionalReadArray(): array
+    public function dataProviderForBidirectionalReadUsingRevertingArray(): array
     {
         return [
             [
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [null],
+                [],
                 [0, 0],
                 [null, null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1, 0, 1],
                 [null, null, null, null],
             ],
             [
                 [1],
+                [],
                 [0, 0],
                 [1, 1],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [3, 2, 1, 1, 2, 3],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [1, 1, 1, 1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [2, 1, 1, 1, 1, 2],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [3.3, 2.2, 1.1, 1.1, 2.2, 3.3],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2, 0, 1, 2],
                 ['3', '2', '1', '1', '2', '3'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [
                     (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
                     1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
                 ],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
+                [9, 8, 7, 6, 5, 4, 3, 2, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [0, 1, 0, 1],
+                [9, 8, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [0, 0],
+                [9, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [0, 1, 0, 1],
+                [2, 1, 1, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [0, 1, 0, 1],
+                [6, 5, 5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [0, 0],
+                [6, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -719,7 +1101,7 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForBidirectionalReadArrayAccess(): array
+    public function dataProviderForBidirectionalReadUsingRevertingArrayAccess(): array
     {
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
@@ -728,54 +1110,441 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
             ],
             [
                 $wrap([null]),
+                [],
                 [0, 0],
                 [null, null],
             ],
             [
                 $wrap([null, null]),
+                [],
                 [0, 1, 0, 1],
                 [null, null, null, null],
             ],
             [
                 $wrap([1]),
+                [],
                 [0, 0],
                 [1, 1],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [3, 2, 1, 1, 2, 3],
             ],
             [
                 $wrap([1, 1, 1]),
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [1, 1, 1, 1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [2, 1, 1, 1, 1, 2],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
+                [],
                 [0, 1, 2, 0, 1, 2],
                 [3.3, 2.2, 1.1, 1.1, 2.2, 3.3],
             ],
             [
                 $wrap(['1', '2', '3']),
+                [],
                 [0, 1, 2, 0, 1, 2],
                 ['3', '2', '1', '1', '2', '3'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [
                     (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
                     1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
                 ],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
+                [9, 8, 7, 6, 5, 4, 3, 2, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [0, 1, 0, 1],
+                [9, 8, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [0, 0],
+                [9, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [0, 1, 0, 1],
+                [2, 1, 1, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [0, 1, 0, 1],
+                [6, 5, 5, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [0, 0],
+                [6, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForBidirectionalReadUsingPrevArray
+     * @dataProvider dataProviderForBidirectionalReadUsingPrevArrayAccess
+     * @param array|ArrayAccessList $input
+     * @param array $config
+     * @param array $expectedKeys
+     * @param array $expectedValues
+     * @return void
+     */
+    public function testBidirectionalReadUsingPrev($input, array $config, array $expectedKeys, array $expectedValues): void
+    {
+        // Given
+        $resultKeys = [];
+        $resultValues = [];
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
+
+        // When
+        foreach ($iterator as $key => $value) {
+            $resultKeys[] = $key;
+            $resultValues[] = $value;
+        }
+
+        // And when
+        for ($iterator->last(); $iterator->valid(); $iterator->prev()) {
+            $resultKeys[] = $iterator->key();
+            $resultValues[] = $iterator->current();
+        }
+
+        // Then
+        $this->assertEquals($expectedKeys, $resultKeys);
+        $this->assertEquals($expectedValues, $resultValues);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForBidirectionalReadUsingPrevArray(): array
+    {
+        return [
+            [
+                [],
+                [],
+                [],
+                [],
+            ],
+            [
+                [null],
+                [],
+                [0, 0],
+                [null, null],
+            ],
+            [
+                [null, null],
+                [],
+                [0, 1, 1, 0],
+                [null, null, null, null],
+            ],
+            [
+                [1],
+                [],
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                [1, 2, 3],
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [3, 2, 1, 1, 2, 3],
+            ],
+            [
+                [1, 1, 1],
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 1, 1, 1, 1],
+            ],
+            [
+                [1, 1, 2],
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [2, 1, 1, 1, 1, 2],
+            ],
+            [
+                [1.1, 2.2, 3.3],
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [3.3, 2.2, 1.1, 1.1, 2.2, 3.3],
+            ],
+            [
+                ['1', '2', '3'],
+                [],
+                [0, 1, 2, 2, 1, 0],
+                ['3', '2', '1', '1', '2', '3'],
+            ],
+            [
+                [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [
+                    (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
+                    1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
+                ],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [0, 1, 1, 0],
+                [9, 8, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [0, 0],
+                [9, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [0, 1, 1, 0],
+                [2, 1, 1, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [0, 1, 1, 0],
+                [6, 5, 5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [0, 0],
+                [6, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
+            ],
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    public function dataProviderForBidirectionalReadUsingPrevArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [
+                $wrap([]),
+                [],
+                [],
+                [],
+            ],
+            [
+                $wrap([null]),
+                [],
+                [0, 0],
+                [null, null],
+            ],
+            [
+                $wrap([null, null]),
+                [],
+                [0, 1, 1, 0],
+                [null, null, null, null],
+            ],
+            [
+                $wrap([1]),
+                [],
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [3, 2, 1, 1, 2, 3],
+            ],
+            [
+                $wrap([1, 1, 1]),
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [1, 1, 1, 1, 1, 1],
+            ],
+            [
+                $wrap([1, 1, 2]),
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [2, 1, 1, 1, 1, 2],
+            ],
+            [
+                $wrap([1.1, 2.2, 3.3]),
+                [],
+                [0, 1, 2, 2, 1, 0],
+                [3.3, 2.2, 1.1, 1.1, 2.2, 3.3],
+            ],
+            [
+                $wrap(['1', '2', '3']),
+                [],
+                [0, 1, 2, 2, 1, 0],
+                ['3', '2', '1', '1', '2', '3'],
+            ],
+            [
+                $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [
+                    (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
+                    1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
+                ],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [0, 1, 1, 0],
+                [9, 8, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [0, 0],
+                [9, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [0, 0],
+                [1, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [0, 1, 1, 0],
+                [2, 1, 1, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [0, 1, 1, 0],
+                [6, 5, 5, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [0, 0],
+                [6, 6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -784,19 +1553,20 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForReadByIndexesArray
      * @dataProvider dataProviderForReadByIndexesArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReadByIndexes($input, array $expectedKeys, array $expectedValues): void
+    public function testReadByIndexes($input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
-        for ($i=0; $i<count($input); ++$i) {
+        for ($i=0; $i<count($iterator); ++$i) {
             if (!isset($iterator[$i])) {
                 $this->fail();
             }
@@ -820,51 +1590,127 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2],
                 [3, 2, 1],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2],
                 [2, 1, 1],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2],
                 [3.3, 2.2, 1.1],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2],
                 ['3', '2', '1'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [0, 1],
+                [9, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [0, 1],
+                [2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [0, 1],
+                [6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -881,70 +1727,147 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [],
                 [0],
                 [1],
             ],
             [
                 $wrap([null]),
+                [],
                 [0],
                 [null],
             ],
             [
                 $wrap([null, null]),
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [0, 1, 2],
                 [3, 2, 1],
             ],
             [
                 $wrap([1, 1, 1]),
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
+                [],
                 [0, 1, 2],
                 [2, 1, 1],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
+                [],
                 [0, 1, 2],
                 [3.3, 2.2, 1.1],
             ],
             [
                 $wrap(['1', '2', '3']),
+                [],
                 [0, 1, 2],
                 ['3', '2', '1'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [0, 1],
+                [9, 8],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [0],
+                [9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [0],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [0, 1],
+                [2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [0, 1],
+                [6, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [0],
+                [6],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
 
     /**
-     * @dataProvider dataProviderForNotFullBidirectionalReadArray
-     * @dataProvider dataProviderForNotFullBidirectionalReadArrayAccess
+     * @dataProvider dataProviderForMultipleDirectionChangeReadArray
+     * @dataProvider dataProviderForMultipleDirectionChangeReadArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $readCount
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testNotFullBidirectionalRead($input, int $readCount, array $expectedKeys, array $expectedValues): void
+    public function testMultipleDirectionChangeRead($input, array $config, int $readCount, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         $iterator->rewind();
@@ -977,32 +1900,50 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForNotFullBidirectionalReadArray(): array
+    public function dataProviderForMultipleDirectionChangeReadArray(): array
     {
         return [
             [
                 [1, 2, 3, 4, 5],
+                [],
                 1,
                 [0, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 5, 1, 2, 3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 2,
                 [0, 1, 2, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 3, 4, 5, 1, 2, 3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 3, 2, 3, 4, 5, 1, 2, 3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 4,
                 [0, 1, 2, 3, 4, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 3, 2, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 4],
+                1,
+                [0, 1, 0, 2, 1, 0],
+                [4, 3, 4, 2, 3, 4],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 4],
+                2,
+                [0, 1, 2, 1, 0, 2, 1, 0],
+                [4, 3, 2, 3, 4, 2, 3, 4],
             ],
         ];
     }
@@ -1010,34 +1951,52 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @return array[]
      */
-    public function dataProviderForNotFullBidirectionalReadArrayAccess(): array
+    public function dataProviderForMultipleDirectionChangeReadArrayAccess(): array
     {
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 1,
                 [0, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 5, 1, 2, 3, 4, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 2,
                 [0, 1, 2, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 3, 4, 5, 1, 2, 3, 4, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 3,
                 [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 3, 2, 3, 4, 5, 1, 2, 3, 4, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 4,
                 [0, 1, 2, 3, 4, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [5, 4, 3, 2, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [1, 4],
+                1,
+                [0, 1, 0, 2, 1, 0],
+                [4, 3, 4, 2, 3, 4],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [1, 4],
+                2,
+                [0, 1, 2, 1, 0, 2, 1, 0],
+                [4, 3, 2, 3, 4, 2, 3, 4],
             ],
         ];
     }
@@ -1046,15 +2005,16 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForWriteArray
      * @dataProvider dataProviderForWriteArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param callable $modifier
      * @param array $expectedStep1
      * @param array $expectedStep2
      * @return void
      */
-    public function testWrite($input, callable $modifier, array $expectedStep1, array $expectedStep2): void
+    public function testWrite($input, array $config, callable $modifier, array $expectedStep1, array $expectedStep2): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -1088,9 +2048,59 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1, 2, 3, 4, 5],
+                [],
                 fn ($value) => $value + 1,
                 [2, 3, 4, 5, 6],
                 [3, 4, 5, 6, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 5],
+                fn ($value) => $value + 1,
+                [2, 3, 4, 5, 6],
+                [3, 4, 5, 6, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 4],
+                fn ($value) => $value + 1,
+                [1, 3, 4, 5, 6],
+                [1, 4, 5, 6, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 5],
+                fn ($value) => $value + 1,
+                [2, 3, 4, 5, 5],
+                [3, 4, 5, 6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 4],
+                fn ($value) => $value + 1,
+                [1, 3, 4, 5, 5],
+                [1, 4, 5, 6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 3],
+                fn ($value) => $value + 1,
+                [1, 2, 4, 5, 5],
+                [1, 2, 5, 6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [2, 4],
+                fn ($value) => $value + 1,
+                [1, 3, 4, 4, 5],
+                [1, 4, 5, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [2, 3],
+                fn ($value) => $value + 1,
+                [1, 2, 4, 4, 5],
+                [1, 2, 5, 4, 5],
             ],
         ];
     }
@@ -1105,6 +2115,7 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 fn ($value) => $value + 1,
                 [2, 3, 4, 5, 6],
                 [3, 4, 5, 6, 7],
@@ -1116,14 +2127,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForAddNewItemsArray
      * @dataProvider dataProviderForAddNewItemsArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $toAdd
-     * @param array $expected
+     * @param array $expectedFromIterator
+     * @param array $expectedActual
      * @return void
      */
-    public function testAddNewItems($input, array $toAdd, array $expected): void
+    public function testAddNewItems($input, array $config, array $toAdd, array $expectedFromIterator, array $expectedActual): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
+        $initialCount = \count($iterator);
         $result = [];
 
         // When
@@ -1136,9 +2150,10 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
             $result[] = $value;
         }
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals(\count($toAdd), \count($iterator) - $initialCount);
+        $this->assertEquals($expectedFromIterator, $result);
         $this->assertEquals(
-            array_reverse($expected),
+            array_reverse($expectedActual),
             ($input instanceof ArrayAccessListFixture) ? $input->toArray() : $input
         );
     }
@@ -1147,14 +2162,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForAddNewItemsArray
      * @dataProvider dataProviderForAddNewItemsArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $toAdd
-     * @param array $expected
+     * @param array $expectedFromIterator
+     * @param array $expectedActual
      * @return void
      */
-    public function testAddNewItemsByIndex($input, array $toAdd, array $expected): void
+    public function testAddNewItemsByIndex($input, array $config, array $toAdd, array $expectedFromIterator, array $expectedActual): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
+        $initialCount = \count($iterator);
         $result = [];
 
         // When
@@ -1168,8 +2186,12 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         }
 
         // Then
-        $this->assertEquals($expected, $result);
-        //$this->assertEquals($expected, ($input instanceof ArrayAccessListFixture) ? $input->toArray() : $input);
+        $this->assertEquals(\count($toAdd), \count($iterator) - $initialCount);
+        $this->assertEquals($expectedFromIterator, $result);
+        $this->assertEquals(
+            array_reverse($expectedActual),
+            ($input instanceof ArrayAccessListFixture) ? $input->toArray() : $input
+        );
     }
 
     public function dataProviderForAddNewItemsArray(): array
@@ -1179,25 +2201,112 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
+                [],
             ],
             [
                 [],
+                [],
+                [1],
                 [1],
                 [1],
             ],
             [
+                [],
                 [],
                 [1, 2, 3],
+                [3, 2, 1],
                 [3, 2, 1],
             ],
             [
                 [1],
+                [],
                 [2, 3, 4, 5],
+                [5, 4, 3, 2, 1],
                 [5, 4, 3, 2, 1],
             ],
             [
                 [1, 2, 3],
+                [],
                 [4, 5, 6],
+                [6, 5, 4, 3, 2, 1],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [],
+                [0, 1],
+                [],
+                [],
+                [],
+            ],
+            [
+                [],
+                [0, 2],
+                [],
+                [],
+                [],
+            ],
+            [
+                [],
+                [0, 1],
+                [1],
+                [1],
+                [1],
+            ],
+            [
+                [],
+                [0, 2],
+                [1],
+                [1],
+                [1],
+            ],
+            [
+                [],
+                [0, 1],
+                [1, 2, 3],
+                [3, 2, 1],
+                [3, 2, 1],
+            ],
+            [
+                [],
+                [0, 2],
+                [1, 2, 3],
+                [3, 2, 1],
+                [3, 2, 1],
+            ],
+            [
+                [1],
+                [0, 1],
+                [2, 3, 4, 5],
+                [5, 4, 3, 2, 1],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1],
+                [0, 2],
+                [2, 3, 4, 5],
+                [5, 4, 3, 2, 1],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3],
+                [0, 3],
+                [4, 5, 6],
+                [6, 5, 4, 3, 2, 1],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3],
+                [0, 2],
+                [4, 5, 6],
+                [6, 5, 4, 3, 2],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3],
+                [0, 1],
+                [4, 5, 6],
+                [6, 5, 4, 3],
                 [6, 5, 4, 3, 2, 1],
             ],
         ];
@@ -1212,25 +2321,112 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
+                [],
             ],
             [
                 $wrap([]),
+                [],
+                [1],
                 [1],
                 [1],
             ],
             [
                 $wrap([]),
+                [],
                 [1, 2, 3],
+                [3, 2, 1],
                 [3, 2, 1],
             ],
             [
                 $wrap([1]),
+                [],
                 [2, 3, 4, 5],
+                [5, 4, 3, 2, 1],
                 [5, 4, 3, 2, 1],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [4, 5, 6],
+                [6, 5, 4, 3, 2, 1],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([]),
+                [0, 1],
+                [],
+                [],
+                [],
+            ],
+            [
+                $wrap([]),
+                [0, 2],
+                [],
+                [],
+                [],
+            ],
+            [
+                $wrap([]),
+                [0, 1],
+                [1],
+                [1],
+                [1],
+            ],
+            [
+                $wrap([]),
+                [0, 2],
+                [1],
+                [1],
+                [1],
+            ],
+            [
+                $wrap([]),
+                [0, 1],
+                [1, 2, 3],
+                [3, 2, 1],
+                [3, 2, 1],
+            ],
+            [
+                $wrap([]),
+                [0, 2],
+                [1, 2, 3],
+                [3, 2, 1],
+                [3, 2, 1],
+            ],
+            [
+                $wrap([1]),
+                [0, 1],
+                [2, 3, 4, 5],
+                [5, 4, 3, 2, 1],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1]),
+                [0, 2],
+                [2, 3, 4, 5],
+                [5, 4, 3, 2, 1],
+                [5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 3],
+                [4, 5, 6],
+                [6, 5, 4, 3, 2, 1],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 2],
+                [4, 5, 6],
+                [6, 5, 4, 3, 2],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3]),
+                [0, 1],
+                [4, 5, 6],
+                [6, 5, 4, 3],
                 [6, 5, 4, 3, 2, 1],
             ],
         ];
@@ -1240,15 +2436,16 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForMovePointerForwardArray
      * @dataProvider dataProviderForMovePointerForwardArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $step
      * @param array $expected
      * @return void
      */
-    public function testMovePointerForward($input, int $step, array $expected): void
+    public function testMovePointerForward($input, array $config, int $step, array $expected): void
     {
         // Given
         $result = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         for ($iterator->rewind(); $iterator->valid(); $iterator->movePointer($step)) {
@@ -1264,48 +2461,111 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1],
+                [],
                 1,
                 [1],
             ],
             [
                 [1],
+                [],
                 2,
                 [1],
             ],
             [
                 [1],
+                [],
                 3,
                 [1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 1,
                 [5, 4, 3, 2, 1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 2,
                 [5, 3, 1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [5, 2],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 4,
                 [5, 1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 5,
                 [5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 6,
                 [5],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 10],
+                1,
+                [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 10],
+                1,
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 9],
+                1,
+                [10, 9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 9],
+                1,
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 10],
+                2,
+                [10, 8, 6, 4, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 10],
+                2,
+                [9, 7, 5, 3, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 9],
+                2,
+                [10, 8, 6, 4, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 8],
+                2,
+                [10, 8, 6, 4],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 9],
+                2,
+                [9, 7, 5, 3],
             ],
         ];
     }
@@ -1317,48 +2577,111 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 $wrap([1]),
+                [],
                 1,
                 [1],
             ],
             [
                 $wrap([1]),
+                [],
                 2,
                 [1],
             ],
             [
                 $wrap([1]),
+                [],
                 3,
                 [1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 1,
                 [5, 4, 3, 2, 1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 2,
                 [5, 3, 1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 3,
                 [5, 2],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 4,
                 [5, 1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 5,
                 [5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 6,
                 [5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 10],
+                1,
+                [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 10],
+                1,
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 9],
+                1,
+                [10, 9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 9],
+                1,
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 10],
+                2,
+                [10, 8, 6, 4, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 10],
+                2,
+                [9, 7, 5, 3, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 9],
+                2,
+                [10, 8, 6, 4, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 8],
+                2,
+                [10, 8, 6, 4],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 9],
+                2,
+                [9, 7, 5, 3],
             ],
         ];
     }
@@ -1367,15 +2690,16 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForMovePointerReverseArray
      * @dataProvider dataProviderForMovePointerReverseArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $step
      * @param array $expected
      * @return void
      */
-    public function testMovePointerReverse($input, int $step, array $expected): void
+    public function testMovePointerReverse($input, array $config, int $step, array $expected): void
     {
         // Given
         $result = [];
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         for ($iterator->last(); $iterator->valid(); $iterator->movePointer(-$step)) {
@@ -1391,48 +2715,117 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1],
+                [],
                 1,
                 [1],
             ],
             [
                 [1],
+                [],
                 2,
                 [1],
             ],
             [
                 [1],
+                [],
                 3,
                 [1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 1,
                 [1, 2, 3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 2,
                 [1, 3, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [1, 4],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 4,
                 [1, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 5,
                 [1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 6,
                 [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 10],
+                1,
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 10],
+                1,
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 9],
+                1,
+                [2, 3, 4, 5, 6, 7, 8, 9, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 9],
+                1,
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 10],
+                2,
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 10],
+                2,
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [2, 10],
+                2,
+                [1, 3, 5, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 9],
+                2,
+                [2, 4, 6, 8, 10],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [0, 8],
+                2,
+                [3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [1, 9],
+                2,
+                [2, 4, 6, 8],
             ],
         ];
     }
@@ -1444,62 +2837,132 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 $wrap([1]),
+                [],
                 1,
                 [1],
             ],
             [
                 $wrap([1]),
+                [],
                 2,
                 [1],
             ],
             [
                 $wrap([1]),
+                [],
                 3,
                 [1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 1,
                 [1, 2, 3, 4, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 2,
                 [1, 3, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 3,
                 [1, 4],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 4,
                 [1, 5],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 5,
                 [1],
             ],
             [
                 $wrap([1, 2, 3, 4, 5]),
+                [],
                 6,
                 [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 10],
+                1,
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 10],
+                1,
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 9],
+                1,
+                [2, 3, 4, 5, 6, 7, 8, 9, 10],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 9],
+                1,
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 10],
+                2,
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 10],
+                2,
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [2, 10],
+                2,
+                [1, 3, 5, 7],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 9],
+                2,
+                [2, 4, 6, 8, 10],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [0, 8],
+                2,
+                [3, 5, 7, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                [1, 9],
+                2,
+                [2, 4, 6, 8],
             ],
         ];
     }
 
     /**
-     * @dataProvider dataProviderForIsInvalidAfterLastItemArray
-     * @dataProvider dataProviderForIsInvalidAfterLastItemArrayAccess
+     * @dataProvider dataProviderForIsInvalidOutOfBoundsArray
+     * @dataProvider dataProviderForIsInvalidOutOfBoundsArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @return void
      */
-    public function testIsInvalidAfterLastItem($input): void
+    public function testIsInvalidAfterLastItem($input, array $config): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // When
         $iterator->last();
@@ -1517,31 +2980,9 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($iterator->valid());
     }
 
-    public function dataProviderForIsInvalidAfterLastItemArray(): array
-    {
-        return [
-            [[]],
-            [[1]],
-            [[1, 2]],
-            [[1, 2, 3]],
-        ];
-    }
-
-    public function dataProviderForIsInvalidAfterLastItemArrayAccess(): array
-    {
-        $wrap = fn ($data) => new ArrayAccessListFixture($data);
-
-        return [
-            [$wrap([])],
-            [$wrap([1])],
-            [$wrap([1, 2])],
-            [$wrap([1, 2, 3])],
-        ];
-    }
-
     /**
-     * @dataProvider dataProviderForIsInvalidBeforeFirstItemArray
-     * @dataProvider dataProviderForIsInvalidBeforeFirstItemArrayAccess
+     * @dataProvider dataProviderForIsInvalidOutOfBoundsArray
+     * @dataProvider dataProviderForIsInvalidOutOfBoundsArrayAccess
      * @param array|ArrayAccessList $input
      * @return void
      */
@@ -1572,25 +3013,53 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($iterator->valid());
     }
 
-    public function dataProviderForIsInvalidBeforeFirstItemArray(): array
+    public function dataProviderForIsInvalidOutOfBoundsArray(): array
     {
         return [
-            [[]],
-            [[1]],
-            [[1, 2]],
-            [[1, 2, 3]],
+            [[], []],
+            [[1], []],
+            [[1, 2], []],
+            [[1, 2, 3], []],
+            [[], [0, 0]],
+            [[], [0, 1]],
+            [[], [1, 2]],
+            [[1, 2], [0, 0]],
+            [[1, 2], [0, 1]],
+            [[1, 2], [0, 2]],
+            [[1, 2], [0, 3]],
+            [[1, 2, 3], [0, 0]],
+            [[1, 2, 3], [0, 1]],
+            [[1, 2, 3], [0, 2]],
+            [[1, 2, 3], [0, 3]],
+            [[1, 2, 3], [1, 2]],
+            [[1, 2, 3], [2, 3]],
+            [[1, 2, 3], [2, 5]],
         ];
     }
 
-    public function dataProviderForIsInvalidBeforeFirstItemArrayAccess(): array
+    public function dataProviderForIsInvalidOutOfBoundsArrayAccess(): array
     {
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([])],
-            [$wrap([1])],
-            [$wrap([1, 2])],
-            [$wrap([1, 2, 3])],
+            [$wrap([]), []],
+            [$wrap([1]), []],
+            [$wrap([1, 2]), []],
+            [$wrap([1, 2, 3]), []],
+            [$wrap([]), [0, 0]],
+            [$wrap([]), [0, 1]],
+            [$wrap([]), [1, 2]],
+            [$wrap([1, 2]), [0, 0]],
+            [$wrap([1, 2]), [0, 1]],
+            [$wrap([1, 2]), [0, 2]],
+            [$wrap([1, 2]), [0, 3]],
+            [$wrap([1, 2, 3]), [0, 0]],
+            [$wrap([1, 2, 3]), [0, 1]],
+            [$wrap([1, 2, 3]), [0, 2]],
+            [$wrap([1, 2, 3]), [0, 3]],
+            [$wrap([1, 2, 3]), [1, 2]],
+            [$wrap([1, 2, 3]), [2, 3]],
+            [$wrap([1, 2, 3]), [2, 5]],
         ];
     }
 
@@ -1598,16 +3067,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForReadMultipleIteratorsSimultaneouslyArray
      * @dataProvider dataProviderForReadMultipleIteratorsSimultaneouslyArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expectedDirect
      * @param array $expectedReverse
      * @return void
      */
-    public function testReadMultipleIteratorsSimultaneously($input, array $expectedDirect, array $expectedReverse): void
+    public function testReadMultipleIteratorsSimultaneously($input, array $config, array $expectedDirect, array $expectedReverse): void
     {
         // Given
-        $iterator1 = new ListRandomAccessReverseIterator($input);
-        $iterator2 = new ListRandomAccessReverseIterator($input);
-        $iterator3 = new ListRandomAccessForwardIterator($input);
+        $iterator1 = new ListRandomAccessReverseIterator($input, ...$config);
+        $iterator2 = new ListRandomAccessReverseIterator($input, ...$config);
+        $iterator3 = new ListRandomAccessForwardIterator($input, ...$config);
         $iterator4 = $iterator2->reverse();
         $iterator5 = $iterator3->reverse();
 
@@ -1683,49 +3153,59 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [1],
                 [1],
             ],
             [
                 [null],
+                [],
                 [null],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [null, null],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [3, 2, 1],
                 [1, 2, 3],
             ],
             [
                 [1, 1, 1],
+                [],
                 [1, 1, 1],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [2, 1, 1],
                 [1, 1, 2],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [3.3, 2.2, 1.1],
                 [1.1, 2.2, 3.3],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 ['3', '2', '1'],
                 ['1', '2', '3'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
             ],
@@ -1741,51 +3221,252 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
                 $wrap([]),
                 [],
                 [],
+                [],
             ],
             [
                 $wrap([1]),
+                [],
                 [1],
                 [1],
             ],
             [
                 $wrap([null]),
+                [],
                 [null],
                 [null],
             ],
             [
                 $wrap([null, null]),
+                [],
                 [null, null],
                 [null, null],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [3, 2, 1],
                 [1, 2, 3],
             ],
             [
                 $wrap([1, 1, 1]),
+                [],
                 [1, 1, 1],
                 [1, 1, 1],
             ],
             [
                 $wrap([1, 1, 2]),
+                [],
                 [2, 1, 1],
                 [1, 1, 2],
             ],
             [
                 $wrap([1.1, 2.2, 3.3]),
+                [],
                 [3.3, 2.2, 1.1],
                 [1.1, 2.2, 3.3],
             ],
             [
                 $wrap(['1', '2', '3']),
+                [],
                 ['3', '2', '1'],
                 ['1', '2', '3'],
             ],
             [
                 $wrap([1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']]),
+                [],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForReadMultiplePartialIteratorsSimultaneouslyArray
+     * @dataProvider dataProviderForReadMultiplePartialIteratorsSimultaneouslyArrayAccess
+     * @param array|ArrayAccessList $input
+     * @param array $config
+     * @param array $expectedDirect
+     * @param array $expectedReverse
+     * @return void
+     */
+    public function testReadMultiplePartialIteratorsSimultaneously($input, array $config, array $expectedDirect, array $expectedReverse): void
+    {
+        // Given
+        $iterator1 = new ListRandomAccessReverseIterator($input, ...$config);
+        $iterator2 = new ListRandomAccessReverseIterator($input, ...$config);
+        $iterator3 = new ListRandomAccessForwardIterator($input, ...$config);
+
+        $result1 = [];
+        $result2 = [];
+        $result3 = [];
+
+        // When
+        $iterator1->rewind();
+        $iterator2->rewind();
+        $iterator3->rewind();
+
+        while (true) {
+            if (!$iterator1->valid() && !$iterator2->valid() && !$iterator3->valid()) {
+                break;
+            }
+
+            $result1[] = $iterator1->current();
+            $result2[] = $iterator2->current();
+            $result3[] = $iterator3->current();
+
+            $iterator1->next();
+            $iterator2->next();
+            $iterator3->next();
+        }
+
+        // Then
+        $this->assertEquals($expectedDirect, $result1);
+        $this->assertEquals($expectedDirect, $result2);
+        $this->assertEquals($expectedReverse, $result3);
+    }
+
+    public function dataProviderForReadMultiplePartialIteratorsSimultaneouslyArray(): array
+    {
+        return [
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 2],
+                [9, 8],
+                [1, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 1],
+                [9],
+                [1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [8, 9],
+                [1],
+                [9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [7, 9],
+                [2, 1],
+                [8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 5],
+                [6, 5],
+                [4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 4],
+                [6],
+                [4],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 3],
+                [],
+                [],
+            ],
+        ];
+    }
+
+    public function dataProviderForReadMultiplePartialIteratorsSimultaneouslyArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 9],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 8],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 2],
+                [9, 8],
+                [1, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 1],
+                [9],
+                [1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [0, 0],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [9, 9],
+                [],
+                [],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [8, 9],
+                [1],
+                [9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [7, 9],
+                [2, 1],
+                [8, 9],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 5],
+                [6, 5],
+                [4, 5],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 4],
+                [6],
+                [4],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                [3, 3],
+                [],
+                [],
             ],
         ];
     }
@@ -1794,13 +3475,14 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForCountArray
      * @dataProvider dataProviderForCountArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $expected
      * @return void
      */
-    public function testCount($input, int $expected): void
+    public function testCount($input, array $config, int $expected): void
     {
         // When
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // Then
         $this->assertCount($expected, $iterator);
@@ -1809,10 +3491,21 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     public function dataProviderForCountArray(): array
     {
         return [
-            [[], 0],
-            [[1], 1],
-            [[1, 2], 2],
-            [[1, 2, 3], 3],
+            [[], [], 0],
+            [[1], [], 1],
+            [[1, 2], [], 2],
+            [[1, 2, 3], [], 3],
+            [[], [0, 0], 0],
+            [[], [0, 1], 0],
+            [[], [0, 2], 0],
+            [[1, 2, 3, 4, 5], [0, 5], 5],
+            [[1, 2, 3, 4, 5], [0, 4], 4],
+            [[1, 2, 3, 4, 5], [1, 5], 4],
+            [[1, 2, 3, 4, 5], [1, 4], 3],
+            [[1, 2, 3, 4, 5], [1, 3], 2],
+            [[1, 2, 3, 4, 5], [2, 3], 1],
+            [[1, 2, 3, 4, 5], [2, 2], 0],
+            [[1, 2, 3, 4, 5], [0, 0], 0],
         ];
     }
 
@@ -1821,10 +3514,21 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([]), 0],
-            [$wrap([1]), 1],
-            [$wrap([1, 2]), 2],
-            [$wrap([1, 2, 3]), 3],
+            [$wrap([]), [], 0],
+            [$wrap([1]), [], 1],
+            [$wrap([1, 2]), [], 2],
+            [$wrap([1, 2, 3]), [], 3],
+            [$wrap([]), [0, 0], 0],
+            [$wrap([]), [0, 1], 0],
+            [$wrap([]), [0, 2], 0],
+            [$wrap([1, 2, 3, 4, 5]), [0, 5], 5],
+            [$wrap([1, 2, 3, 4, 5]), [0, 4], 4],
+            [$wrap([1, 2, 3, 4, 5]), [1, 5], 4],
+            [$wrap([1, 2, 3, 4, 5]), [1, 4], 3],
+            [$wrap([1, 2, 3, 4, 5]), [1, 3], 2],
+            [$wrap([1, 2, 3, 4, 5]), [2, 3], 1],
+            [$wrap([1, 2, 3, 4, 5]), [2, 2], 0],
+            [$wrap([1, 2, 3, 4, 5]), [0, 0], 0],
         ];
     }
 
@@ -1832,16 +3536,18 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForErrorOnSetArray
      * @dataProvider dataProviderForErrorOnSetArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $offset
+     * @param string $exceptionClass
      * @return void
      */
-    public function testErrorOnSet($input, int $offset): void
+    public function testErrorOnSet($input, array $config, int $offset, string $exceptionClass): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // Then
-        $this->expectException(\OutOfBoundsException::class);
+        $this->expectException($exceptionClass);
 
         // When
         $iterator[$offset] = 1;
@@ -1850,14 +3556,24 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     public function dataProviderForErrorOnSetArray(): array
     {
         return [
-            [[], 1],
-            [[], 2],
-            [[1], 2],
-            [[1], 3],
-            [[1, 2], 3],
-            [[1, 2], 4],
-            [[1, 2, 3], 4],
-            [[1, 2, 3], 5],
+            [[], [], -2, \OutOfBoundsException::class],
+            [[], [], 0, \OutOfBoundsException::class],
+            [[1], [], -2, \OutOfBoundsException::class],
+            [[1], [], 1, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [], -2, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [0, 5], -2, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [0, 4], -2, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [1, 5], -2, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [1, 4], -2, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [0, 5], 5, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [0, 4], 4, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [1, 5], 4, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [1, 4], 3, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [2, 4], 2, \OutOfBoundsException::class],
+            [[1, 2, 3, 4, 5], [1, 5], -1, \RangeException::class],
+            [[1, 2, 3, 4, 5], [1, 4], -1, \RangeException::class],
+            [[1, 2, 3, 4, 5], [2, 4], -1, \RangeException::class],
+            [[1, 2, 3, 4, 5], [3, 3], -1, \RangeException::class],
         ];
     }
 
@@ -1866,14 +3582,24 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([]), 1],
-            [$wrap([]), 2],
-            [$wrap([1]), 2],
-            [$wrap([1]), 3],
-            [$wrap([1, 2]), 3],
-            [$wrap([1, 2]), 4],
-            [$wrap([1, 2, 3]), 4],
-            [$wrap([1, 2, 3]), 5],
+            [$wrap([]), [], -2, \OutOfBoundsException::class],
+            [$wrap([]), [], 0, \OutOfBoundsException::class],
+            [$wrap([1]), [], -2, \OutOfBoundsException::class],
+            [$wrap([1]), [], 1, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [], -2, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [0, 5], -2, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [0, 4], -2, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [1, 5], -2, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [1, 4], -2, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [0, 5], 5, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [0, 4], 4, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [1, 5], 4, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [1, 4], 3, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [2, 4], 2, \OutOfBoundsException::class],
+            [$wrap([1, 2, 3, 4, 5]), [1, 5], -1, \RangeException::class],
+            [$wrap([1, 2, 3, 4, 5]), [1, 4], -1, \RangeException::class],
+            [$wrap([1, 2, 3, 4, 5]), [2, 4], -1, \RangeException::class],
+            [$wrap([1, 2, 3, 4, 5]), [3, 3], -1, \RangeException::class],
         ];
     }
 
@@ -1881,13 +3607,17 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForPopUntilEmptyArray
      * @dataProvider dataProviderForPopUntilEmptyArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @return void
      */
-    public function testPopUntilEmpty($input): void
+    public function testPopUntilEmpty($input, array $config): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
         $result = [];
+        $initialCount = \count($input);
+        $start = $config[0] ?? 0;
+        $end = $config[1] ?? $initialCount;
 
         // When
         while (count($iterator)) {
@@ -1899,16 +3629,27 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
 
         // Then
         $this->assertEmpty($result);
+        $this->assertCount($initialCount - ($end - $start), $input);
     }
 
     public function dataProviderForPopUntilEmptyArray(): array
     {
         return [
-            [[1]],
-            [[1, 2]],
-            [[1, 2, 3]],
-            [[1, 2, 3, 4]],
-            [[1, 1, 1, 1, 1]],
+            [[], []],
+            [[1], []],
+            [[1, 2], []],
+            [[1, 2, 3], []],
+            [[1, 2, 3, 4], []],
+            [[1, 1, 1, 1, 1], []],
+            [[], [0, 0]],
+            [[1], [0, 0]],
+            [[1], [0, 1]],
+            [[1, 2, 3, 4, 5], [0, 5]],
+            [[1, 2, 3, 4, 5], [0, 4]],
+            [[1, 2, 3, 4, 5], [0, 3]],
+            [[1, 2, 3, 4, 5], [0, 2]],
+            [[1, 2, 3, 4, 5], [0, 1]],
+            [[1, 2, 3, 4, 5], [0, 0]],
         ];
     }
 
@@ -1917,11 +3658,21 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([1])],
-            [$wrap([1, 2])],
-            [$wrap([1, 2, 3])],
-            [$wrap([1, 2, 3, 4])],
-            [$wrap([1, 1, 1, 1, 1])],
+            [$wrap([]), []],
+            [$wrap([1]), []],
+            [$wrap([1, 2]), []],
+            [$wrap([1, 2, 3]), []],
+            [$wrap([1, 2, 3, 4]), []],
+            [$wrap([1, 1, 1, 1, 1]), []],
+            [$wrap([]), [0, 0]],
+            [$wrap([1]), [0, 0]],
+            [$wrap([1]), [0, 1]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 5]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 4]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 3]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 2]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 1]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 0]],
         ];
     }
 
@@ -1929,13 +3680,14 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForIteratorIsValidAfterShiftArray
      * @dataProvider dataProviderForIteratorIsValidAfterShiftArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expected
      * @return void
      */
-    public function testIteratorIsValidAfterShift($input, array $expected): void
+    public function testIteratorIsValidAfterShift($input, array $config, array $expected): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
         $result = [];
 
         // When
@@ -1964,10 +3716,15 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     public function dataProviderForIteratorIsValidAfterShiftArray(): array
     {
         return [
-            [[1, 2], [1]],
-            [[1, 2, 3], [2, 1]],
-            [[1, 2, 3, 4], [3, 2, 1]],
-            [[1, 1, 1, 1, 1], [1, 1, 1, 1]],
+            [[1, 2], [], [1]],
+            [[1, 2, 3], [], [2, 1]],
+            [[1, 2, 3, 4], [], [3, 2, 1]],
+            [[1, 1, 1, 1, 1], [], [1, 1, 1, 1]],
+            [[1, 2, 3, 4, 5], [], [4, 3, 2, 1]],
+            [[1, 2, 3, 4, 5], [0, 5], [4, 3, 2, 1]],
+            [[1, 2, 3, 4, 5], [0, 4], [4, 3, 2]],
+            [[1, 2, 3, 4, 5], [0, 3], [4, 3]],
+            [[1, 2, 3, 4, 5], [0, 2], [4]],
         ];
     }
 
@@ -1976,10 +3733,18 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([1, 2]), [1]],
-            [$wrap([1, 2, 3]), [2, 1]],
-            [$wrap([1, 2, 3, 4]), [3, 2, 1]],
-            [$wrap([1, 1, 1, 1, 1]), [1, 1, 1, 1]],
+            [$wrap([1, 2]), [], [1]],
+            [$wrap([1, 2]), [], [1]],
+            [$wrap([1, 2, 3]), [], [2, 1]],
+            [$wrap([1, 2, 3]), [], [2, 1]],
+            [$wrap([1, 2, 3, 4]), [], [3, 2, 1]],
+            [$wrap([1, 2, 3, 4]), [], [3, 2, 1]],
+            [$wrap([1, 1, 1, 1, 1]), [], [1, 1, 1, 1]],
+            [$wrap([1, 2, 3, 4, 5]), [], [4, 3, 2, 1]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 5], [4, 3, 2, 1]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 4], [4, 3, 2]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 3], [4, 3]],
+            [$wrap([1, 2, 3, 4, 5]), [0, 2], [4]],
         ];
     }
 
@@ -1987,13 +3752,14 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForUnsetFromHeadArray
      * @dataProvider dataProviderForUnsetFromHeadArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param array $expected
      * @return void
      */
-    public function testUnsetFromHead($input, array $expected): void
+    public function testUnsetFromHead($input, array $config, array $expected): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
         $result = [];
 
         // When
@@ -2012,22 +3778,57 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 [1],
                 [],
+                [],
             ],
             [
                 [1, 2],
+                [],
                 [1],
             ],
             [
                 [1, 2, 3],
+                [],
                 [2, 1],
             ],
             [
                 [1, 2, 3, 4],
+                [],
                 [3, 2, 1],
             ],
             [
                 [1, 1, 1, 1, 1],
+                [],
                 [1, 1, 1, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [],
+                [4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 5],
+                [4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 4],
+                [4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 3],
+                [4, 3],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 2],
+                [4],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 1],
+                [],
             ],
         ];
     }
@@ -2040,22 +3841,57 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
             [
                 $wrap([1]),
                 [],
+                [],
             ],
             [
                 $wrap([1, 2]),
+                [],
                 [1],
             ],
             [
                 $wrap([1, 2, 3]),
+                [],
                 [2, 1],
             ],
             [
                 $wrap([1, 2, 3, 4]),
+                [],
                 [3, 2, 1],
             ],
             [
                 $wrap([1, 1, 1, 1, 1]),
+                [],
                 [1, 1, 1, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [],
+                [4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [0, 5],
+                [4, 3, 2, 1],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [0, 4],
+                [4, 3, 2],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [0, 3],
+                [4, 3],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [0, 2],
+                [4],
+            ],
+            [
+                $wrap([1, 2, 3, 4, 5]),
+                [0, 1],
+                [],
             ],
         ];
     }
@@ -2064,13 +3900,14 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderForErrorOnUnsetFromMiddleArray
      * @dataProvider dataProviderForErrorOnUnsetFromMiddleArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $offset
      * @return void
      */
-    public function testErrorOnUnsetFromMiddle($input, int $offset): void
+    public function testErrorOnUnsetFromMiddle($input, array $config, int $offset): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // Then
         $this->expectException(\InvalidArgumentException::class);
@@ -2082,12 +3919,16 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
     public function dataProviderForErrorOnUnsetFromMiddleArray(): array
     {
         return [
-            [[1, 2], 1],
-            [[1, 2, 3], 1],
-            [[1, 2, 3], 2],
-            [[1, 2, 3, 4], 1],
-            [[1, 2, 3, 4], 2],
-            [[1, 2, 3, 4], 3],
+            [[1, 2], [], 1],
+            [[1, 2, 3], [], 1],
+            [[1, 2, 3], [], 2],
+            [[1, 2, 3, 4], [], 1],
+            [[1, 2, 3, 4], [], 2],
+            [[1, 2, 3, 4], [], 3],
+            [[1, 2, 3, 4, 5], [], 3],
+            [[1, 2, 3, 4, 5], [0, 5], 3],
+            [[1, 2, 3, 4, 5], [0, 4], 3],
+            [[1, 2, 3, 4, 5], [1, 5], 3],
         ];
     }
 
@@ -2096,26 +3937,31 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([1, 2]), 1],
-            [$wrap([1, 2, 3]), 1],
-            [$wrap([1, 2, 3]), 2],
-            [$wrap([1, 2, 3, 4]), 1],
-            [$wrap([1, 2, 3, 4]), 2],
-            [$wrap([1, 2, 3, 4]), 3],
+            [$wrap([1, 2]), [], 1],
+            [$wrap([1, 2, 3]), [], 1],
+            [$wrap([1, 2, 3]), [], 2],
+            [$wrap([1, 2, 3, 4]), [], 1],
+            [$wrap([1, 2, 3, 4]), [], 2],
+            [$wrap([1, 2, 3, 4]), [], 3],
+            [$wrap([1, 2, 3, 4, 5]), [], 3],
+            [$wrap([1, 2, 3, 4, 5]), [0, 5], 3],
+            [$wrap([1, 2, 3, 4, 5]), [0, 4], 3],
+            [$wrap([1, 2, 3, 4, 5]), [1, 5], 3],
         ];
     }
 
     /**
-     * @dataProvider dataProviderForErrorOnUnsetOutOfBoundsArray
-     * @dataProvider dataProviderForErrorOnUnsetOutOfBoundsArrayAccess
+     * @dataProvider dataProviderForErrorOutOfBoundsOnUnsetArray
+     * @dataProvider dataProviderForErrorOutOfBoundsOnUnsetArrayAccess
      * @param array|ArrayAccessList $input
+     * @param array $config
      * @param int $offset
      * @return void
      */
-    public function testErrorOnUnsetOutOfBounds($input, int $offset): void
+    public function testErrorOutOfBoundsOnUnset($input, array $config, int $offset): void
     {
         // Given
-        $iterator = new ListRandomAccessReverseIterator($input);
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
 
         // Then
         $this->expectException(\OutOfBoundsException::class);
@@ -2124,39 +3970,87 @@ class ListRandomAccessReverseIteratorTest extends \PHPUnit\Framework\TestCase
         unset($iterator[$offset]);
     }
 
-    public function dataProviderForErrorOnUnsetOutOfBoundsArray(): array
+    public function dataProviderForErrorOutOfBoundsOnUnsetArray(): array
     {
         return [
-            [[], 0],
-            [[], 1],
-            [[], -1],
-            [[1], 1],
-            [[1], -1],
-            [[1, 2, 3], 3],
-            [[1, 2, 3], -1],
-            [[1, 2, 3, 4], 4],
-            [[1, 2, 3, 4], 5],
-            [[1, 2, 3, 4], -1],
-            [[1, 2, 3, 4], -2],
+            [[], [], 0],
+            [[], [], 1],
+            [[], [], -1],
+            [[1], [], 1],
+            [[1], [], -1],
+            [[1, 2, 3], [], 3],
+            [[1, 2, 3], [], -1],
+            [[1, 2, 3, 4], [], 4],
+            [[1, 2, 3, 4], [], 5],
+            [[1, 2, 3, 4], [], -1],
+            [[1, 2, 3, 4], [], -2],
+            [[1, 2, 3, 4, 5], [1, 4], 4],
+            [[1, 2, 3, 4, 5], [1, 3], 4],
+            [[1, 2, 3, 4, 5], [1, 3], 3],
         ];
     }
 
-    public function dataProviderForErrorOnUnsetOutOfBoundsArrayAccess(): array
+    public function dataProviderForErrorOutOfBoundsOnUnsetArrayAccess(): array
     {
         $wrap = fn ($data) => new ArrayAccessListFixture($data);
 
         return [
-            [$wrap([]), 0],
-            [$wrap([]), 1],
-            [$wrap([]), -1],
-            [$wrap([1]), 1],
-            [$wrap([1]), -1],
-            [$wrap([1, 2, 3]), 3],
-            [$wrap([1, 2, 3]), -1],
-            [$wrap([1, 2, 3, 4]), 4],
-            [$wrap([1, 2, 3, 4]), 5],
-            [$wrap([1, 2, 3, 4]), -1],
-            [$wrap([1, 2, 3, 4]), -2],
+            [$wrap([]), [], 0],
+            [$wrap([]), [], 1],
+            [$wrap([]), [], -1],
+            [$wrap([1]), [], 1],
+            [$wrap([1]), [], -1],
+            [$wrap([1, 2, 3]), [], 3],
+            [$wrap([1, 2, 3]), [], -1],
+            [$wrap([1, 2, 3, 4]), [], 4],
+            [$wrap([1, 2, 3, 4]), [], 5],
+            [$wrap([1, 2, 3, 4]), [], -1],
+            [$wrap([1, 2, 3, 4]), [], -2],
+            [$wrap([1, 2, 3, 4, 5]), [1, 4], 4],
+            [$wrap([1, 2, 3, 4, 5]), [1, 3], 4],
+            [$wrap([1, 2, 3, 4, 5]), [1, 3], 3],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForRangeErrorOnUnsetArray
+     * @dataProvider dataProviderForRangeErrorOnUnsetArrayAccess
+     * @param array|ArrayAccessList $input
+     * @param array $config
+     * @param int $offset
+     * @return void
+     */
+    public function testRangeErrorOnUnset($input, array $config, int $offset): void
+    {
+        // Given
+        $iterator = new ListRandomAccessReverseIterator($input, ...$config);
+
+        // Then
+        $this->expectException(\RangeException::class);
+
+        // When
+        unset($iterator[$offset]);
+    }
+
+    public function dataProviderForRangeErrorOnUnsetArray(): array
+    {
+        return [
+            [[1, 2, 3, 4, 5], [1, 5], 0],
+            [[1, 2, 3, 4, 5], [1, 4], 0],
+            [[1, 2, 3, 4, 5], [2, 4], 0],
+            [[1, 2, 3, 4, 5], [3, 4], 0],
+        ];
+    }
+
+    public function dataProviderForRangeErrorOnUnsetArrayAccess(): array
+    {
+        $wrap = fn ($data) => new ArrayAccessListFixture($data);
+
+        return [
+            [$wrap([1, 2, 3, 4, 5]), [1, 5], 0],
+            [$wrap([1, 2, 3, 4, 5]), [1, 4], 0],
+            [$wrap([1, 2, 3, 4, 5]), [2, 4], 0],
+            [$wrap([1, 2, 3, 4, 5]), [3, 4], 0],
         ];
     }
 }
