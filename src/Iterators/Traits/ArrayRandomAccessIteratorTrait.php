@@ -59,16 +59,22 @@ trait ArrayRandomAccessIteratorTrait
      */
     public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->data);
+        return array_key_exists($offset, $this->keyMap);
     }
 
     /**
      * {@inheritDoc}
      *
      * @return TValue
+     *
+     * @throws \OutOfBoundsException
      */
     public function offsetGet($offset)
     {
+        if (!array_key_exists($offset, $this->keyMap)) {
+            throw new \OutOfBoundsException();
+        }
+
         return $this->data[$offset];
     }
 
@@ -77,17 +83,25 @@ trait ArrayRandomAccessIteratorTrait
      *
      * @param TKey|null $offset
      * @param TValue $value
+     *
+     * @throws \OutOfBoundsException
+     * @throws \RangeException
      */
     public function offsetSet($offset, $value): void
     {
+        $this->checkOffsetIsNotOutOfBounds($offset);
+
         if ($offset === null) {
+            $this->checkCanAppend();
             /** @phpstan-ignore-next-line */
             $this->data[] = $value;
             /** @phpstan-ignore-next-line */
             $this->keys[] = \array_key_last($this->data);
+            $this->end++;
         } elseif (!$this->offsetExists($offset)) {
             $this->data[$offset] = $value;
             $this->keys[] = $offset;
+            $this->end++;
         } else {
             $this->data[$offset] = $value;
         }
@@ -95,20 +109,20 @@ trait ArrayRandomAccessIteratorTrait
 
     /**
      * {@inheritDoc}
-     *
-     * @param TKey $offset
      */
-    public function offsetUnset($offset)
+    public function count(): int
     {
-        if ($this->offsetExists($offset)) {
-            $index = array_search($offset, $this->keys);
+        return \count($this->data);
+    }
 
-            if ($index < $this->currentIndex) {
-                $this->currentIndex--;
-            }
-
-            unset($this->data[$offset]);
-            $this->updateKeys();
+    /**
+     * @param TKey|null $offset
+     * @return void
+     */
+    protected function checkOffsetIsNotOutOfBounds($offset): void
+    {
+        if ($offset !== null && !$this->offsetExists($offset) && array_key_exists($offset, $this->data)) {
+            throw new \OutOfBoundsException();
         }
     }
 
@@ -117,7 +131,12 @@ trait ArrayRandomAccessIteratorTrait
      */
     protected function updateKeys(): void
     {
-        $this->keys = array_keys($this->data);
+        if ($this->start !== 0 || $this->end < \count($this->data)) {
+            $this->keys = $this->sliceKeys(\array_keys($this->data));
+        } else {
+            $this->keys = \array_keys($this->data);
+        }
+        $this->keyMap = \array_flip($this->keys);
     }
 
     /**
@@ -134,13 +153,5 @@ trait ArrayRandomAccessIteratorTrait
         } else {
             $this->currentKey = $this->keys[$this->currentIndex];
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return \count($this->data);
     }
 }

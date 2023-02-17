@@ -13,16 +13,17 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderDirectRead
      * @param array $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testDirectRead(array $input, array $expectedKeys, array $expectedValues): void
+    public function testDirectRead(array $input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -60,51 +61,163 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2],
                 [1, 2, 3],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2],
                 [1, 1, 2],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2],
                 [1.1, 2.2, 3.3],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2],
                 ['1', '2', '3'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 10],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 9],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                [1, 2, 3, 4, 5, 6, 7],
+                [2, 3, 4, 5, 6, 7, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 6],
+                [3, 4, 5],
+                [4, 5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3],
+                [3, 4, 5, 6, 7, 8],
+                [4, 5, 6, 7, 8, 9],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                [1, 2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 7],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                [1, 2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 8],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                [1, 2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 7],
+                ['b', 'c', 'd', 'e', 'f', 'g'],
+                [2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 6],
+                ['a', 'b', 'c', 'd', 'e', 'f'],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 6],
+                ['b', 'c', 'd', 'e', 'f'],
+                [2, 3, 4, 5, 6],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2, 5],
+                ['c', 'd', 'e'],
+                [3, 4, 5],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2],
+                ['c', 'd', 'e', 'f', 'g'],
+                [3, 4, 5, 6, 7],
             ],
         ];
     }
@@ -112,16 +225,17 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForReverseRead
      * @param array $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseReadByReverting(array $input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByReverting(array $input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
         $iterator = $iterator->reverse();
 
         // When
@@ -138,16 +252,17 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForReverseRead
      * @param array $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReverseReadByUsingPrev(array $input, array $expectedKeys, array $expectedValues): void
+    public function testReverseReadByUsingPrev(array $input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
 
         // When
         for ($iterator->last(); $iterator->valid(); $iterator->prev()) {
@@ -170,51 +285,163 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [1, 0],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [2, 1, 0],
                 [3, 2, 1],
             ],
             [
                 [1, 1, 1],
+                [],
                 [2, 1, 0],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [2, 1, 0],
                 [2, 1, 1],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [2, 1, 0],
                 [3.3, 2.2, 1.1],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [2, 1, 0],
                 ['3', '2', '1'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [8, 7, 6, 5, 4, 3, 2, 1, 0],
                 [(object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0],
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 10],
+                [8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                [8, 7, 6, 5, 4, 3, 2, 1],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 9],
+                [8, 7, 6, 5, 4, 3, 2, 1],
+                [9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [7, 6, 5, 4, 3, 2, 1, 0],
+                [8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                [7, 6, 5, 4, 3, 2, 1],
+                [8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 6],
+                [5, 4, 3],
+                [6, 5, 4],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3],
+                [8, 7, 6, 5, 4, 3],
+                [9, 8, 7, 6, 5, 4],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0],
+                ['g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 7],
+                ['g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 8],
+                ['g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 7],
+                ['g', 'f', 'e', 'd', 'c', 'b'],
+                [7, 6, 5, 4, 3, 2],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 6],
+                ['f', 'e', 'd', 'c', 'b', 'a'],
+                [6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 6],
+                ['f', 'e', 'd', 'c', 'b'],
+                [6, 5, 4, 3, 2],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2, 5],
+                ['e', 'd', 'c'],
+                [5, 4, 3],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2],
+                ['g', 'f', 'e', 'd', 'c'],
+                [7, 6, 5, 4, 3],
             ],
         ];
     }
@@ -222,16 +449,17 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForBidirectionalRead
      * @param array $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testBidirectionalRead(array $input, array $expectedKeys, array $expectedValues): void
+    public function testBidirectionalRead(array $input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -261,54 +489,166 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [null],
+                [],
                 [0, 0],
                 [null, null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1, 1, 0],
                 [null, null, null, null],
             ],
             [
                 [1],
+                [],
                 [0, 0],
                 [1, 1],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2, 2, 1, 0],
                 [1, 2, 3, 3, 2, 1],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2, 2, 1, 0],
                 [1, 1, 1, 1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2, 2, 1, 0],
                 [1, 1, 2, 2, 1, 1],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2, 2, 1, 0],
                 [1.1, 2.2, 3.3, 3.3, 2.2, 1.1],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2, 2, 1, 0],
                 ['1', '2', '3', '3', '2', '1'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
                 [
                     1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c'],
                     (object)['a', 'b', 'c'], [1, 2, 3], null, false, true, '', '3', 2.2, 1,
                 ],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 10],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                [1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1],
+                [2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 9],
+                [1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1],
+                [2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                [1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1],
+                [2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 6],
+                [3, 4, 5, 5, 4, 3],
+                [4, 5, 6, 6, 5, 4],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3],
+                [3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3],
+                [4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 7],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 8],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 7],
+                ['b', 'c', 'd', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'b'],
+                [2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 6],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [1, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 6],
+                ['b', 'c', 'd', 'e', 'f', 'f', 'e', 'd', 'c', 'b'],
+                [2, 3, 4, 5, 6, 6, 5, 4, 3, 2],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2, 5],
+                ['c', 'd', 'e', 'e', 'd', 'c'],
+                [3, 4, 5, 5, 4, 3],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2],
+                ['c', 'd', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c'],
+                [3, 4, 5, 6, 7, 7, 6, 5, 4, 3],
             ],
         ];
     }
@@ -316,25 +656,52 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForReadByIndexes
      * @param array $input
+     * @param array $config
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testReadByIndexes(array $input, array $expectedKeys, array $expectedValues): void
+    public function testReadByIndexes(array $input, array $config, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
+        $begin = $config[0] ?? 0;
+        $end = $config[1] ?? \count($input);
 
         // When
-        for ($i=0; $i<count($input); ++$i) {
-            if (!isset($iterator[$i])) {
+        $i = 0;
+        foreach ($input as $key => $_) {
+            if ($i < $begin || $i >= $end) {
+                ++$i;
+                continue;
+            }
+
+            if (!isset($iterator[$key])) {
                 $this->fail();
             }
 
-            $resultKeys[] = $i;
-            $resultValues[] = $iterator[$i];
+            $resultKeys[] = $key;
+            $resultValues[] = $iterator[$key];
+
+            ++$i;
+        }
+
+
+        // And when
+        $i = 0;
+        foreach ($input as $key => $_) {
+            if ($i >= $begin || $i < $end) {
+                ++$i;
+                continue;
+            }
+
+            if (isset($iterator[$key])) {
+                $this->fail();
+            }
+
+            ++$i;
         }
 
         // Then
@@ -352,51 +719,163 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
             ],
             [
                 [1],
+                [],
                 [0],
                 [1],
             ],
             [
                 [null],
+                [],
                 [0],
                 [null],
             ],
             [
                 [null, null],
+                [],
                 [0, 1],
                 [null, null],
             ],
             [
                 [1, 2, 3],
+                [],
                 [0, 1, 2],
                 [1, 2, 3],
             ],
             [
                 [1, 1, 1],
+                [],
                 [0, 1, 2],
                 [1, 1, 1],
             ],
             [
                 [1, 1, 2],
+                [],
                 [0, 1, 2],
                 [1, 1, 2],
             ],
             [
                 [1.1, 2.2, 3.3],
+                [],
                 [0, 1, 2],
                 [1.1, 2.2, 3.3],
             ],
             [
                 ['1', '2', '3'],
+                [],
                 [0, 1, 2],
                 ['1', '2', '3'],
             ],
             [
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+                [],
                 [0, 1, 2, 3, 4, 5, 6, 7, 8],
                 [1, 2.2, '3', '', true, false, null, [1, 2, 3], (object)['a', 'b', 'c']],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 10],
+                [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 9],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+                [2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                [0, 1, 2, 3, 4, 5, 6, 7],
+                [1, 2, 3, 4, 5, 6, 7, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                [1, 2, 3, 4, 5, 6, 7],
+                [2, 3, 4, 5, 6, 7, 8],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3, 6],
+                [3, 4, 5],
+                [4, 5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [3],
+                [3, 4, 5, 6, 7, 8],
+                [4, 5, 6, 7, 8, 9],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                [1, 2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 7],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                [1, 2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 8],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+                [1, 2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 7],
+                ['b', 'c', 'd', 'e', 'f', 'g'],
+                [2, 3, 4, 5, 6, 7],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0, 6],
+                ['a', 'b', 'c', 'd', 'e', 'f'],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 6],
+                ['b', 'c', 'd', 'e', 'f'],
+                [2, 3, 4, 5, 6],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2, 5],
+                ['c', 'd', 'e'],
+                [3, 4, 5],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [2],
+                ['c', 'd', 'e', 'f', 'g'],
+                [3, 4, 5, 6, 7],
             ],
         ];
     }
@@ -404,17 +883,18 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForNotFullBidirectionalRead
      * @param array $input
+     * @param array $config
      * @param int $readCount
      * @param array $expectedKeys
      * @param array $expectedValues
      * @return void
      */
-    public function testNotFullBidirectionalRead(array $input, int $readCount, array $expectedKeys, array $expectedValues): void
+    public function testNotFullBidirectionalRead(array $input, array $config, int $readCount, array $expectedKeys, array $expectedValues): void
     {
         // Given
         $resultKeys = [];
         $resultValues = [];
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
 
         // When
         $iterator->rewind();
@@ -452,27 +932,73 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1, 2, 3, 4, 5],
+                [],
                 1,
                 [0, 1, 0, 4, 3, 2, 1, 0],
                 [1, 2, 1, 5, 4, 3, 2, 1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 2,
                 [0, 1, 2, 1, 0, 4, 3, 2, 1, 0],
                 [1, 2, 3, 2, 1, 5, 4, 3, 2, 1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0, 1, 2, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [1, 2, 3, 4, 3, 2, 1, 5, 4, 3, 2, 1],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 4,
                 [0, 1, 2, 3, 4, 3, 2, 1, 0, 4, 3, 2, 1, 0],
                 [1, 2, 3, 4, 5, 4, 3, 2, 1, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                1,
+                [1, 2, 1, 8, 7, 6, 5, 4, 3, 2, 1],
+                [2, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                2,
+                [1, 2, 3, 2, 1, 8, 7, 6, 5, 4, 3, 2, 1],
+                [2, 3, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                3,
+                [0, 1, 2, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0],
+                [1, 2, 3, 4, 3, 2, 1, 8, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                4,
+                [1, 2, 3, 4, 5, 4, 3, 2, 1, 7, 6, 5, 4, 3, 2, 1],
+                [2, 3, 4, 5, 6, 5, 4, 3, 2, 8, 7, 6, 5, 4, 3, 2],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [0],
+                2,
+                ['a', 'b', 'c', 'b', 'a', 'g', 'f', 'e', 'd', 'c', 'b', 'a'],
+                [1, 2, 3, 2, 1, 7, 6, 5, 4, 3, 2, 1],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7],
+                [1, 6],
+                3,
+                ['b', 'c', 'd', 'e', 'd', 'c', 'b', 'f', 'e', 'd', 'c', 'b'],
+                [2, 3, 4, 5, 4, 3, 2, 6, 5, 4, 3, 2],
             ],
         ];
     }
@@ -480,15 +1006,16 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForWrite
      * @param array $input
+     * @param array $config
      * @param callable $modifier
      * @param array $expectedStep1
      * @param array $expectedStep2
      * @return void
      */
-    public function testWrite(array $input, callable $modifier, array $expectedStep1, array $expectedStep2): void
+    public function testWrite(array $input, array $config, callable $modifier, array $expectedStep1, array $expectedStep2): void
     {
         // Given
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -516,9 +1043,66 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1, 2, 3, 4, 5],
+                [],
                 fn ($value) => $value + 1,
                 [2, 3, 4, 5, 6],
                 [3, 4, 5, 6, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 5],
+                fn ($value) => $value + 1,
+                [2, 3, 4, 5, 6],
+                [3, 4, 5, 6, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [0, 4],
+                fn ($value) => $value + 1,
+                [2, 3, 4, 5, 5],
+                [3, 4, 5, 6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 5],
+                fn ($value) => $value + 1,
+                [1, 3, 4, 5, 6],
+                [1, 4, 5, 6, 7],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 4],
+                fn ($value) => $value + 1,
+                [1, 3, 4, 5, 5],
+                [1, 4, 5, 6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [1, 3],
+                fn ($value) => $value + 1,
+                [1, 3, 4, 4, 5],
+                [1, 4, 5, 4, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [2, 4],
+                fn ($value) => $value + 1,
+                [1, 2, 4, 5, 5],
+                [1, 2, 5, 6, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5],
+                [2, 3],
+                fn ($value) => $value + 1,
+                [1, 2, 4, 4, 5],
+                [1, 2, 5, 4, 5],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5],
+                [2, 3],
+                fn ($value) => $value + 1,
+                [1, 2, 4, 4, 5],
+                [1, 2, 5, 4, 5],
             ],
         ];
     }
@@ -526,14 +1110,16 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForUnset
      * @param array $input
+     * @param array $config
      * @param callable $predicate
-     * @param array $expected
+     * @param array $expectedIterator
+     * @param array $expectedInput
      * @return void
      */
-    public function testUnset(array $input, callable $predicate, array $expected): void
+    public function testUnset(array $input, array $config, callable $predicate, array $expectedIterator, array $expectedInput): void
     {
         // Given
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
 
         // When
         foreach ($iterator as $key => $value) {
@@ -542,21 +1128,27 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             }
         }
 
+        // And when
+        $iterator->rewind();
+
         // Then
-        $this->assertEquals($expected, Stream::of($input)->toArray());
+        $this->assertEquals($expectedIterator, Stream::of($iterator)->toArray());
+        $this->assertEquals($expectedInput, Stream::of($input)->toArray());
     }
 
     /**
      * @dataProvider dataProviderForUnset
      * @param array $input
+     * @param array $config
      * @param callable $predicate
-     * @param array $expected
+     * @param array $expectedIterator
+     * @param array $expectedInput
      * @return void
      */
-    public function testUnsetReversed(array $input, callable $predicate, array $expected): void
+    public function testUnsetReversed(array $input, array $config, callable $predicate, array $expectedIterator, array $expectedInput): void
     {
         // Given
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
         $iterator = $iterator->reverse();
 
         // When
@@ -566,8 +1158,12 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
             }
         }
 
+        // And when
+        $iterator->rewind();
+
         // Then
-        $this->assertEquals($expected, Stream::of($input)->toArray());
+        $this->assertEquals($expectedIterator, Stream::of($iterator)->reverse()->toArray());
+        $this->assertEquals($expectedInput, Stream::of($input)->toArray());
     }
 
     /**
@@ -577,9 +1173,60 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     {
         return [
             [
-                [1, 2, 3, 4, 5],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [],
                 fn ($value) => $value % 2 === 0,
-                [1, 3, 5],
+                [1, 3, 5, 7, 9],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                fn ($value) => $value % 2 === 0,
+                [1, 3, 5, 7, 9],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 8],
+                fn ($value) => $value % 2 === 0,
+                [1, 3, 5, 7],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 9],
+                fn ($value) => $value % 2 === 0,
+                [3, 5, 7, 9],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                fn ($value) => $value % 2 === 0,
+                [3, 5, 7],
+                [1, 3, 5, 7, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [2, 7],
+                fn ($value) => $value % 2 === 0,
+                [3, 5, 7],
+                [1, 2, 3, 5, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [2, 2],
+                fn ($value) => $value % 2 === 0,
+                [],
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [2],
+                fn ($value) => $value % 2 === 0,
+                [3, 5, 7, 9],
+                [1, 2, 3, 5, 7, 9],
             ],
         ];
     }
@@ -587,15 +1234,18 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForAddNewItems
      * @param array $input
+     * @param array $config
      * @param array $toAdd
-     * @param array $expected
+     * @param array $expectedIterator
+     * @param array $expectedInput
      * @return void
      */
-    public function testAddNewItems(array $input, array $toAdd, array $expected): void
+    public function testAddNewItems(array $input, array $config, array $toAdd, array $expectedIterator, array $expectedInput): void
     {
         // Given
-        $iterator = new ArrayRandomAccessForwardIterator($input);
-        $result = [];
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
+        $resultIterator = [];
+        $resultInput = [];
 
         // When
         foreach ($toAdd as $item) {
@@ -604,10 +1254,16 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
         // And when
         foreach ($iterator as $value) {
-            $result[] = $value;
+            $resultIterator[] = $value;
         }
 
-        $this->assertEquals($expected, $result);
+        // And when
+        foreach ($input as $value) {
+            $resultInput[] = $value;
+        }
+
+        $this->assertEquals($expectedIterator, $resultIterator);
+        $this->assertEquals($expectedInput, $resultInput);
     }
 
     public function dataProviderForAddNewItems(): array
@@ -617,25 +1273,77 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
                 [],
                 [],
                 [],
+                [],
+                [],
             ],
             [
                 [],
+                [],
+                [1],
                 [1],
                 [1],
             ],
             [
                 [],
+                [],
+                [1, 2, 3],
                 [1, 2, 3],
                 [1, 2, 3],
             ],
             [
                 [1],
+                [],
                 [2, 3, 4, 5],
+                [1, 2, 3, 4, 5],
                 [1, 2, 3, 4, 5],
             ],
             [
                 [1, 2, 3],
+                [],
                 [4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                [],
+                [0, 0],
+                [4, 5, 6],
+                [4, 5, 6],
+                [4, 5, 6],
+            ],
+            [
+                [1, 2, 3],
+                [1],
+                [4, 5, 6],
+                [2, 3, 4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                [1, 2, 3],
+                [1, 3],
+                [4, 5, 6],
+                [2, 3, 4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                [1, 2, 3],
+                [1, 4],
+                [4, 5, 6],
+                [2, 3, 4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                [1, 2, 3],
+                [2],
+                [4, 5, 6],
+                [3, 4, 5, 6],
+                [1, 2, 3, 4, 5, 6],
+            ],
+            [
+                ['a' => 1, 'b' => 2, 'c' => 3],
+                [2],
+                [4, 5, 6],
+                [3, 4, 5, 6],
                 [1, 2, 3, 4, 5, 6],
             ],
         ];
@@ -644,15 +1352,18 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForAddNewItemsAssociative
      * @param array $input
+     * @param array $config
      * @param array $toAdd
-     * @param array $expected
+     * @param array $expectedIterator
+     * @param array $expectedInput
      * @return void
      */
-    public function testAddNewItemsAssociative(array $input, array $toAdd, array $expected): void
+    public function testAddNewItemsAssociative(array $input, array $config, array $toAdd, array $expectedIterator, array $expectedInput): void
     {
         // Given
-        $iterator = new ArrayRandomAccessForwardIterator($input);
-        $result = [];
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
+        $resultIterator = [];
+        $resultInput = [];
 
         // When
         foreach ($toAdd as $key => $item) {
@@ -661,10 +1372,16 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
         // And when
         foreach ($iterator as $key => $value) {
-            $result[$key] = $value;
+            $resultIterator[$key] = $value;
         }
 
-        $this->assertEquals($expected, $result);
+        // And when
+        foreach ($input as $key => $value) {
+            $resultInput[$key] = $value;
+        }
+
+        $this->assertEquals($expectedIterator, $resultIterator);
+        $this->assertEquals($expectedInput, $resultInput);
     }
 
     public function dataProviderForAddNewItemsAssociative(): array
@@ -672,33 +1389,101 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [],
+                [],
+                [1],
                 [1],
                 [1],
             ],
             [
                 [],
+                [],
+                [1 => 1],
                 [1 => 1],
                 [1 => 1],
             ],
             [
                 [],
+                [],
+                [1, 2, 'a' => 3],
                 [1, 2, 'a' => 3],
                 [1, 2, 'a' => 3],
             ],
             [
                 [1],
+                [],
+                [2, 3, 4, 5],
                 [2, 3, 4, 5],
                 [2, 3, 4, 5],
             ],
             [
                 [1],
+                [],
                 [1 => 2, 'a' => 3, 10 => 4],
+                [1, 2, 'a' => 3, 10 => 4],
                 [1, 2, 'a' => 3, 10 => 4],
             ],
             [
                 [1, -2, 3, -4],
+                [],
                 [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
                 [1, 2, 3, 4, 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [0],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [0, 4],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [0, 5],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [1],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1 => 2, 2 => 3, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [1, 4],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1 => 2, 2 => 3, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [1, 5],
+                [1 => 2, 3 => 4, 4 => 5, 'a' => 6],
+                [1 => 2, 2 => 3, 3 => 4, 4 => 5, 'a' => 6],
+                [1, 2, 3, 4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [4, 4],
+                [4 => 5, 'a' => 6],
+                [4 => 5, 'a' => 6],
+                [1, -2, 3, -4, 5, 'a' => 6],
+            ],
+            [
+                [1, -2, 3, -4],
+                [2],
+                [3 => 4, 4 => 5, 'a' => 6],
+                [2 => 3, 3 => 4, 4 => 5, 'a' => 6],
+                [1, -2, 3, 4, 5, 'a' => 6],
             ],
         ];
     }
@@ -706,21 +1491,24 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForUnsetForward
      * @param array $input
+     * @param array $config
      * @param int $offset
      * @param array $keysToUnset
-     * @param array $expected
+     * @param array $expectedIterator
+     * @param array $expectedInput
      * @return void
      */
-    public function testUnsetForward(array $input, int $offset, array $keysToUnset, array $expected): void
+    public function testUnsetForward(array $input, array $config, int $offset, array $keysToUnset, array $expectedIterator, array $expectedInput): void
     {
         // Given
-        $result = [];
+        $resultIterator = [];
+        $resultInput = [];
 
         // When
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
         $i = 0;
         for ($iterator->rewind(); $i < $offset; $iterator->next()) {
-            $result[] = $iterator->current();
+            $resultIterator[] = $iterator->current();
             ++$i;
         }
 
@@ -731,11 +1519,17 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
         // And when
         for (; $iterator->valid(); $iterator->next()) {
-            $result[] = $iterator->current();
+            $resultIterator[] = $iterator->current();
+        }
+
+        // And when
+        foreach ($input as $item) {
+            $resultInput[] = $item;
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedIterator, $resultIterator);
+        $this->assertEquals($expectedInput, $resultInput);
     }
 
     public function dataProviderForUnsetForward(): array
@@ -743,57 +1537,123 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1],
+                [],
                 1,
                 [0],
                 [1],
+                [],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0],
                 [1, 2, 3, 4, 5],
+                [2, 3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [1],
                 [1, 2, 3, 4, 5],
+                [1, 3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0, 1],
                 [1, 2, 3, 4, 5],
+                [3, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0, 1, 2],
                 [1, 2, 3, 4, 5],
+                [4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0, 2],
                 [1, 2, 3, 4, 5],
+                [2, 4, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [0, 2, 4],
                 [1, 2, 3, 4],
+                [2, 4],
             ],
             [
                 [1, 2, 3, 4, 5, 6],
+                [],
                 3,
                 [0, 2, 4],
                 [1, 2, 3, 4, 6],
+                [2, 4, 6],
             ],
             [
                 [1, 2, 3, 4, 5, 6],
+                [],
                 4,
                 [0, 2, 3],
                 [1, 2, 3, 4, 5, 6],
+                [2, 5, 6],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0],
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4, 6, 7, 8, 9],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4, 6, 7, 8, 9],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 10],
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4, 6, 7, 8, 9],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 6],
+                3,
+                [0, 2, 4],
+                [1, 2, 3, 4, 6],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                3,
+                [2, 4],
+                [2, 3, 4, 6, 7, 8, 9],
+                [1, 2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                3,
+                [2, 4],
+                [2, 3, 4, 6, 7, 8],
+                [1, 2, 4, 6, 7, 8, 9],
             ],
         ];
     }
@@ -801,21 +1661,23 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dataProviderForUnsetReverse
      * @param array $input
+     * @param array $config
      * @param int $offset
      * @param array $keysToUnset
-     * @param array $expected
+     * @param array $expectedIterator
      * @return void
      */
-    public function testUnsetReverse(array $input, int $offset, array $keysToUnset, array $expected): void
+    public function testUnsetReverse(array $input, array $config, int $offset, array $keysToUnset, array $expectedIterator, array $expectedInput): void
     {
         // Given
-        $result = [];
+        $resultIterator = [];
+        $resultInput = [];
 
         // When
-        $iterator = new ArrayRandomAccessForwardIterator($input);
+        $iterator = new ArrayRandomAccessForwardIterator($input, ...$config);
         $i = 0;
         for ($iterator->last(); $i < $offset; $iterator->prev()) {
-            $result[] = $iterator->current();
+            $resultIterator[] = $iterator->current();
             ++$i;
         }
 
@@ -826,11 +1688,17 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
 
         // And when
         for (; $iterator->valid(); $iterator->prev()) {
-            $result[] = $iterator->current();
+            $resultIterator[] = $iterator->current();
+        }
+
+        // And when
+        foreach ($input as $item) {
+            $resultInput[] = $item;
         }
 
         // Then
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expectedIterator, $resultIterator);
+        $this->assertEquals($expectedInput, $resultInput);
     }
 
     public function dataProviderForUnsetReverse(): array
@@ -838,57 +1706,123 @@ class ArrayRandomAccessForwardIteratorTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [1],
+                [],
                 1,
                 [0],
                 [1],
+                [],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [4],
                 [5, 4, 3, 2, 1],
+                [1, 2, 3, 4],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [3],
                 [5, 4, 3, 2, 1],
+                [1, 2, 3, 5],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [4, 3],
                 [5, 4, 3, 2, 1],
+                [1, 2, 3],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [4, 3, 2],
                 [5, 4, 3, 2, 1],
+                [1, 2],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [2, 4],
                 [5, 4, 3, 2, 1],
+                [1, 2, 4],
             ],
             [
                 [1, 2, 3, 4, 5],
+                [],
                 3,
                 [4, 2, 0],
                 [5, 4, 3, 2],
+                [2, 4],
             ],
             [
                 [1, 2, 3, 4, 5, 6],
+                [],
                 3,
                 [1, 3, 5],
                 [6, 5, 4, 3, 1],
+                [1, 3, 5],
             ],
             [
                 [1, 2, 3, 4, 5, 6],
+                [],
                 4,
                 [5, 3, 2],
                 [6, 5, 4, 3, 2, 1],
+                [1, 2, 5],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0],
+                3,
+                [0, 2, 4],
+                [9, 8, 7, 6, 4, 2],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 9],
+                3,
+                [0, 2, 4],
+                [9, 8, 7, 6, 4, 2],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 10],
+                3,
+                [0, 2, 4],
+                [9, 8, 7, 6, 4, 2],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [0, 6],
+                3,
+                [0, 2, 4],
+                [6, 5, 4, 4, 2],
+                [2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1],
+                3,
+                [2, 4],
+                [9, 8, 7, 6, 4, 2],
+                [1, 2, 4, 6, 7, 8, 9],
+            ],
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                [1, 8],
+                3,
+                [2, 4],
+                [8, 7, 6, 6, 4, 2],
+                [1, 2, 4, 6, 7, 8, 9],
             ],
         ];
     }
