@@ -374,6 +374,40 @@ class Single
     }
 
     /**
+     * Return a sliding window of width n over the given collection.
+     *
+     * @template T
+     * @param iterable<T> $data
+     * @param int $size
+     * @param int $step
+     *
+     * @return \Generator<array<T>>
+     */
+    public static function window(iterable $data, int $size, int $step = 1): \Generator {
+        $window = [];
+        $overlapSize = $size - 1 + $step;
+        $isLastIterationYielded = false;
+
+        foreach ($data as $datum) {
+            $isLastIterationYielded = false;
+            $window[] = $datum;
+
+            if (\count($window) === $size) {
+                yield $window;
+                $window = \array_slice($window, $size-$overlapSize);
+                $isLastIterationYielded = true;
+            }
+        }
+
+        if (!$isLastIterationYielded && \count($window) > 0) {
+            while (\count($window) < $size) {
+                $window[] = null;
+            }
+            yield $window;
+        }
+    }
+
+    /**
      * Limit iteration to a max size limit
      *
      * @param iterable<mixed> $data
